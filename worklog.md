@@ -45,3 +45,21 @@ Stage Summary:
 - VERIFIED END-TO-END via agent-browser: genuine Liner login/register UI renders; auth preflight+POST reach the real Liner API (401 on bad creds); VisitorSession fetches valid visitorData via proxy; Innertube search/next/player return real catalog data (ANDROID_VR profile returns direct audio URLs, playabilityStatus OK); googlevideo audio streams through /api/media with Range (206, audio/mp4); SoundCloud clientId discovery + API proxy verified (transparent relay)
 - Registration is network-rate-limited by Liner backend (NETWORK_ACCOUNT_LIMIT) — user signs in with their existing Liner account; authenticated flows use the same verified API path
 - Artifacts: liner-app/ (patched sources), public/liner/ (built SPA), src/app/api/{yt,sc,media,fetch}/ (proxies), src/lib/liner-proxy.ts
+
+---
+Task ID: 3
+Agent: main (Z.ai)
+Task: Fix YouTube sign-in — device code not loading ("youtube sign in doesnt work like the code isnt loading")
+
+Work Log:
+- Traced the genuine Liner TV device-flow chain: tvOauthClient (www.youtube.com/tv -> kabuki base script -> clientId/secret) -> tvDeviceFlow (POST /o/oauth2/device/code) -> tvTokens (POST /o/oauth2/token), all routed through /api/fetch
+- Bug #1: /api/fetch forwarded x-liner-user-agent verbatim (unlike /api/yt which maps it). YouTube served a 5.7KB script-less shell page instead of the full TV page -> "base script not found" -> code never appeared. Fixed by mapping override -> User-Agent + browser-default UA fallback in /api/fetch
+- Bug #2 (the flaky killer): with the real TV Cobalt UA, www.youtube.com/tv answers with a ~24KB response header block (12.9KB CSP + 7.4KB report-only). Node/undici caps response headers at 16KB -> UND_ERR_HEADERS_OVERFLOW ("fetch failed") -> intermittent 502s. Electron/Chromium has no such cap, which is why the desktop app works
+- Fix: added undici dep + src/instrumentation.ts registering Agent({ maxHeaderSize: 256KB }) via setGlobalDispatcher (Symbol.for interop with Node built-in fetch), serverExternalPackages: ["undici"] in next.config.ts, restarted dev server
+- Hardened /api/fetch with one retry on network-level failure for GET/HEAD only (never token/code POSTs)
+- Also mapped x-liner-user-agent in /api/media route (tvSabr.ts sets the override on every TV SABR streaming request; googlevideo URLs are UA-bound -> would 403 after sign-in)
+
+Stage Summary:
+- VERIFIED in-browser (agent-browser eval, same-origin, same fetch paths as the SPA): TV page 197KB x3 stable -> kabuki script 1.1MB -> real TV oauth client -> device code obtained (user_code SXP-NZZ-PNX, google.com/device, 1800s) -> token poll returns authorization_pending exactly as the poll loop expects
+- Fixes are all server-side (Next.js shell); the built SPA in public/liner is untouched, no rebuild needed
+- Artifacts changed: src/app/api/fetch/route.ts, src/app/api/media/route.ts, src/instrumentation.ts (new), next.config.ts, package.json (undici)

@@ -18,6 +18,12 @@ export const runtime = "nodejs";
 const UPSTREAM_TIMEOUT_MS = 120_000;
 const MAX_BUFFER_BYTES = 64 * 1024 * 1024; // full-track downloads stay well below this
 
+// browser-forbidden header we accept from the app and remap upstream.
+// googlevideo URLs are bound to the User-Agent of the player request that
+// minted them (TV SABR sends x-liner-user-agent via its tvFetch) — without
+// this mapping signed-in TV playback gets 403s.
+const UA_OVERRIDE = "x-liner-user-agent";
+
 function decodeTarget(request: NextRequest): URL | null {
   const raw = request.nextUrl.searchParams.get("u");
   if (!raw) return null;
@@ -40,6 +46,12 @@ async function proxy(request: NextRequest): Promise<Response> {
   headers.set("host", target.host);
   // some CDNs sign URLs per-referer; keep ours out of the request
   headers.delete("referer");
+
+  const userAgentOverride = headers.get(UA_OVERRIDE);
+  if (userAgentOverride) {
+    headers.delete(UA_OVERRIDE);
+    headers.set("user-agent", userAgentOverride);
+  }
 
   let upstream: Response;
   try {

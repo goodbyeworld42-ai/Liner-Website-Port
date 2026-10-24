@@ -15,6 +15,13 @@ export const runtime = "nodejs";
 const UPSTREAM_TIMEOUT_MS = 30_000;
 const MAX_BUFFER_BYTES = 32 * 1024 * 1024;
 
+// browser-forbidden header we accept from the app and remap upstream
+// (mirrors electron/cors.ts and the /api/yt route behaviour — without it
+// www.youtube.com/tv serves a script-less shell page and TV sign-in dies)
+const UA_OVERRIDE = "x-liner-user-agent";
+const DEFAULT_USER_AGENT =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36";
+
 function decodeTarget(request: NextRequest): URL | null {
   const raw = request.nextUrl.searchParams.get("u");
   if (!raw) return null;
@@ -36,14 +43,21 @@ async function proxy(request: NextRequest): Promise<Response> {
   const headers = forwardableHeaders(request);
   headers.set("host", target.host);
 
+  const userAgentOverride = headers.get(UA_OVERRIDE);
+  if (userAgentOverride) {
+    headers.delete(UA_OVERRIDE);
+    headers.set("user-agent", userAgentOverride);
+  } else if (!headers.has("user-agent")) {
+    headers.set("user-agent", DEFAULT_USER_AGENT);
+  }
+
   let body: ArrayBuffer | undefined;
   if (request.method !== "GET" && request.method !== "HEAD") {
     body = await request.arrayBuffer();
   }
 
-  let upstream: Response;
-  try {
-    upstream = await fetch(target.toString(), {
+  const doFetch = (): Promise<Response> =>
+    fetch(target.toString(), {
       method: request.method,
       headers,
       body,
@@ -51,9 +65,26 @@ async function proxy(request: NextRequest): Promise<Response> {
       cache: "no-store",
       signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
     });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "upstream unreachable";
-    return Response.json({ error: "Upstream request failed", message }, { status: 502 });
+
+  let upstream: Response;
+  try {
+    upstream = await doFetch();
+  } catch (firstError) {
+    // undici keep-alive sockets occasionally go stale after big transfers
+    // ("fetch failed") — one immediate retry on safe methods rescues the
+    // sign-in bootstrap without risking duplicate POSTs (codes / tokens)
+    const retryable = request.method === "GET" || request.method === "HEAD";
+    if (!retryable) {
+      const message =
+        firstError instanceof Error ? firstError.message : "upstream unreachable";
+      return Response.json({ error: "Upstream request failed", message }, { status: 502 });
+    }
+    try {
+      upstream = await doFetch();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "upstream unreachable";
+      return Response.json({ error: "Upstream request failed", message }, { status: 502 });
+    }
   }
 
   if (request.method === "HEAD" || upstream.body === null) {

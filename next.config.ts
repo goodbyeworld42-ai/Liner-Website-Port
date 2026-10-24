@@ -3,6 +3,9 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: "standalone",
   compress: false,
+  // keep undici external so instrumentation.ts wires the raised
+  // response-header cap into the real Node global fetch
+  serverExternalPackages: ["undici"],
   typescript: {
     ignoreBuildErrors: true,
   },
