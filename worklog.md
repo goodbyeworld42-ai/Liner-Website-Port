@@ -100,3 +100,22 @@ Stage Summary:
 - YouTube sign-in: app side VERIFIED WORKING; final consent step requires the user's own browser/phone (Google blocks automated browsers — external constraint, not a bug)
 - "Track unavailable": YouTube anonymous bot-check by design; sign-in (account playback, on by default) lifts it
 - Artifacts changed: liner-app/src/app/EnvironmentWarning.tsx (no-op), public/liner rebuilt+redeployed
+
+---
+Task ID: 6
+Agent: main (Z.ai)
+Task: Fix "keeps loading and saying try again" on YouTube sign-in + re-check tryliner/desktop GitHub
+
+Work Log:
+- Re-checked GitHub (user request): fetched origin — HEAD still 30f319d (build-only commit, node-gyp), new tags v0.1.24–v0.1.40 only; diffed liner-ref/src vs liner-app/src — YouTube auth code IDENTICAL to latest main; port needs no upstream sync
+- Server-side probes: full chain healthy via curl (form + app's exact JSON shapes): tv page 197KB, kabuki script 1.1MB, device codes issue fine, token polls return authorization_pending 5/5
+- Root cause found in dev.log + code: token-poll POSTs occasionally die on undici stale keep-alive sockets → proxy 502 JSON {error:"Upstream request failed"} → app parseTokenResponse reads error field → pollTvDeviceToken threw (non-pending error) → dialog "Try again"; any transient poll failure killed the whole sign-in (desktop unaffected — Chromium retries sockets transparently). Log showed flows restarting after ~3 polls = user stuck in retry loop
+- Fix (app): tvTokens.ts — TvTokenResult gains retryable flag; network errors caught → retryable; 5xx/non-JSON bodies → retryable; only terminal Google errors (invalid_client, invalid_grant, unauthorized_client, access_denied, unsupported_grant_type, invalid_scope) are non-retryable. tvDeviceFlow.ts — poll loop keeps waiting through retryable failures until code expiry (expired_token → auto new code, unchanged)
+- Fix (proxy): /api/fetch route — one network-level retry now also covers POSTs to Google OAuth endpoints (/o/oauth2/device/code, /o/oauth2/token) — safe: orphan device codes just expire, token polls never consume the grant; Liner API mutations stay single-shot
+- Tests: updated EnvironmentWarning.test.tsx + WindowControls.test.tsx to assert the website-port no-ops (old tests expected desktop features removed per user request); suite: 658 passing, 0 failing
+- Rebuilt SPA, redeployed public/liner; browser-verified: sign-in dialog stays WAITING 30s+ with continuous 200 polls, code GWGZ-GLGG + QR canvas rendered, no "Try again"
+
+Stage Summary:
+- YouTube sign-in is now resilient to transient proxy/Google hiccups: no more "Try again" death loop; the dialog waits (and auto-refreshes expired codes) until the user completes approval at google.com/device / yt.be/activate or scans the QR
+- Google consent still must be done by the user in their own browser (Google blocks automated browsers) — unchanged external constraint
+- Artifacts: liner-app/src/shared/youtube/auth/{tvTokens,tvDeviceFlow}.ts, src/app/api/fetch/route.ts, 2 test files; public/liner rebuilt

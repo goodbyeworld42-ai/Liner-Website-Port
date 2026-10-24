@@ -71,9 +71,16 @@ async function proxy(request: NextRequest): Promise<Response> {
     upstream = await doFetch();
   } catch (firstError) {
     // undici keep-alive sockets occasionally go stale after big transfers
-    // ("fetch failed") — one immediate retry on safe methods rescues the
-    // sign-in bootstrap without risking duplicate POSTs (codes / tokens)
-    const retryable = request.method === "GET" || request.method === "HEAD";
+    // ("fetch failed"). Safe methods retry unconditionally. Google OAuth
+    // endpoints retry too: a device/code POST that never landed just leaves
+    // an orphan code that expires unused, and the token endpoint is a poll
+    // loop by definition (repeats never consume the grant). Other POSTs
+    // (Liner API mutations) stay single-shot.
+    const oauthEndpoint = /\/o\/oauth2\/(device\/code|token)$/.test(target.pathname);
+    const retryable =
+      request.method === "GET" ||
+      request.method === "HEAD" ||
+      (request.method === "POST" && oauthEndpoint);
     if (!retryable) {
       const message =
         firstError instanceof Error ? firstError.message : "upstream unreachable";

@@ -86,9 +86,14 @@ export async function pollTvDeviceToken(
     );
     if (result.status === "granted") return result.tokens;
     if (result.error === "slow_down") intervalMs += SLOW_DOWN_STEP_MS;
-    else if (result.error !== "authorization_pending") {
+    else if (result.error === "authorization_pending") {
+      // normal pre-approval response — keep polling
+    } else if (!result.retryable) {
       throw new YoutubeAuthError(result.error);
     }
+    // retryable failures (network hiccups, 5xx, malformed proxy bodies):
+    // the device code is still valid, so just poll again instead of
+    // killing the sign-in with "Try again"
   }
   throw new YoutubeAuthError("expired_token");
 }
