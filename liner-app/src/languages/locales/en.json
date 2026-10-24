@@ -826,7 +826,7 @@
       "checking_updates": "Checking…",
       "up_to_date": "Up to date",
       "latest_version_toast": "You are running the latest version (v{version})",
-      "build_info": "Production release · Electron 44 · React 19",
+      "build_info": "Production release · Website port · React 19",
       "tech_stack_title": "Technology & Engine",
       "tech_electron": "Electron 44 & Web Audio",
       "tech_electron_desc": "Low-latency streaming pipeline with perceptual volume normalization and uninterrupted playback.",

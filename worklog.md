@@ -63,3 +63,20 @@ Stage Summary:
 - VERIFIED in-browser (agent-browser eval, same-origin, same fetch paths as the SPA): TV page 197KB x3 stable -> kabuki script 1.1MB -> real TV oauth client -> device code obtained (user_code SXP-NZZ-PNX, google.com/device, 1800s) -> token poll returns authorization_pending exactly as the poll loop expects
 - Fixes are all server-side (Next.js shell); the built SPA in public/liner is untouched, no rebuild needed
 - Artifacts changed: src/app/api/fetch/route.ts, src/app/api/media/route.ts, src/instrumentation.ts (new), next.config.ts, package.json (undici)
+
+---
+Task ID: 4
+Agent: main (Z.ai)
+Task: Add Tagalog + Indonesian language support, remove desktop window controls, About credit "client v0.2.10 (website port by JayJoice)"
+
+Work Log:
+- Translated all 868 en.json keys into new locales: tl.json (Filipino/Taglish UI style) and id.json (Bahasa Indonesia); validated exact key parity with en.json (868/868, 0 missing/extra)
+- Registered both languages: SUPPORTED_LOCALES + translations map + LOCALE_OPTIONS (🇵🇭 flag-philippines "Tagalog", 🇮🇩 flag-indonesia "Bahasa Indonesia" — verified names exist in react-apple-emojis dataset)
+- Removed desktop window chrome: WindowControls.tsx now a null-rendering no-op (kept interface/type for call sites) — removes minimize/maximize/close capsule from Header, AppFrame (fullscreen), LoginPage, RootErrorFallback
+- AboutTab: version line now renders "Client v{appVersion} (website port by JayJoice)" (was "Client x.y.z (native)"); version pill uses appVersion directly; en.json build_info "Electron 44" → "Website port" (mirrored in tl/id locales)
+- Rebuilt SPA (tsc -b && vite build; fixed TS2304 bundleInfo leftover), deployed dist → public/liner
+
+Stage Summary:
+- Browser-verified: window control buttons gone from login; language selector lists Tagalog + Bahasa Indonesia; selecting Tagalog renders "Musika mo, paraan mo / Mag-sign in / Gumawa ng account"; Indonesian renders "Musikmu, caramu / Masuk / Buat akun" (screenshot confirmed)
+- "website port by JayJoice" string confirmed present in built bundle (App-wCdudAfB.js); About tab renders it once signed in
+- Artifacts changed: liner-app/src/languages/{locale.ts,data.ts,options.tsx}, locales/{tl,id}.json (new), locales/en.json, features/navigation/ui/WindowControls.tsx, features/settings/ui/tabs/AboutTab.tsx; rebuilt public/liner

@@ -12,7 +12,6 @@ export function AboutTab({ searchQuery }: { searchQuery?: string }) {
   const { t } = useTranslation();
   const {
     appVersion,
-    bundleInfo,
     checkingUpdate,
     lastCheckedTime,
     handleCheckUpdates,
@@ -55,7 +54,7 @@ export function AboutTab({ searchQuery }: { searchQuery?: string }) {
         </div>
         <span className="inline-flex h-[34px] items-center gap-[8px] rounded-full bg-black/[0.06] px-[14px] text-[14px] font-[600] text-text-primary select-none dark:bg-white/[0.1]">
           <span className="size-[8px] rounded-full bg-emerald-400" />v
-          {bundleInfo?.bundleVersion || appVersion}
+          {appVersion}
         </span>
       </div>
 
@@ -64,9 +63,7 @@ export function AboutTab({ searchQuery }: { searchQuery?: string }) {
           className="text-[13px] text-text-secondary select-none"
           style={font}
         >
-          {bundleInfo?.isOta
-            ? `Client ${bundleInfo.bundleVersion}${bundleInfo.sha256 ? ` (${bundleInfo.sha256.slice(0, 7)})` : ""} · Core ${appVersion}`
-            : `Client ${appVersion} (native)`}
+          {`Client v${appVersion} (website port by JayJoice)`}
           {lastCheckedTime ? ` · ${lastCheckedTime}` : ""}
         </span>
         <button
