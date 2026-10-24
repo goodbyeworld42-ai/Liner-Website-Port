@@ -1,0 +1,333 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-lyra: var(--lyra);
+  --color-lyra-strong: var(--lyra-strong);
+  --color-canvas: var(--canvas);
+  --color-elevated: var(--elevated);
+  --color-panel: var(--panel);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* Lyra default theme: dark, near-black canvas, signature red */
+:root {
+  --radius: 0.75rem;
+  --canvas: #0b0b0d;
+  --background: #101013;
+  --foreground: #f4f4f5;
+  --card: #16161a;
+  --card-foreground: #f4f4f5;
+  --popover: #1a1a1f;
+  --popover-foreground: #f4f4f5;
+  --primary: #ff4d4d;
+  --primary-foreground: #ffffff;
+  --secondary: #1e1e24;
+  --secondary-foreground: #f4f4f5;
+  --muted: #1a1a1f;
+  --muted-foreground: #9b9ba4;
+  --accent: #26262d;
+  --accent-foreground: #f4f4f5;
+  --destructive: #ff4d4d;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.12);
+  --ring: rgba(255, 77, 77, 0.6);
+  --chart-1: #ff4d4d;
+  --chart-2: #ffb86b;
+  --chart-3: #7ae0c3;
+  --chart-4: #c9a2ff;
+  --chart-5: #ffd76b;
+  --sidebar: #0b0b0d;
+  --sidebar-foreground: #f4f4f5;
+  --sidebar-primary: #ff4d4d;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #1a1a1f;
+  --sidebar-accent-foreground: #f4f4f5;
+  --sidebar-border: rgba(255, 255, 255, 0.07);
+  --sidebar-ring: rgba(255, 77, 77, 0.6);
+  --lyra: #ff4d4d;
+  --lyra-strong: #ff6b6b;
+  --elevated: #17171b;
+  --panel: #1d1d22;
+}
+
+.dark {
+  --canvas: #0b0b0d;
+  --background: #101013;
+  --foreground: #f4f4f5;
+  --card: #16161a;
+  --card-foreground: #f4f4f5;
+  --popover: #1a1a1f;
+  --popover-foreground: #f4f4f5;
+  --primary: #ff4d4d;
+  --primary-foreground: #ffffff;
+  --secondary: #1e1e24;
+  --secondary-foreground: #f4f4f5;
+  --muted: #1a1a1f;
+  --muted-foreground: #9b9ba4;
+  --accent: #26262d;
+  --accent-foreground: #f4f4f5;
+  --destructive: #ff4d4d;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.12);
+  --ring: rgba(255, 77, 77, 0.6);
+  --lyra: #ff4d4d;
+  --lyra-strong: #ff6b6b;
+  --elevated: #17171b;
+  --panel: #1d1d22;
+}
+
+/* Light theme */
+:root:not(.dark) {
+  --canvas: #f4f4f6;
+  --background: #ffffff;
+  --foreground: #17171b;
+  --card: #ffffff;
+  --card-foreground: #17171b;
+  --popover: #ffffff;
+  --popover-foreground: #17171b;
+  --primary: #ff3b3b;
+  --primary-foreground: #ffffff;
+  --secondary: #f0f0f3;
+  --secondary-foreground: #17171b;
+  --muted: #f0f0f3;
+  --muted-foreground: #6d6d78;
+  --accent: #eaeaef;
+  --accent-foreground: #17171b;
+  --destructive: #ff3b3b;
+  --border: rgba(0, 0, 0, 0.09);
+  --input: rgba(0, 0, 0, 0.12);
+  --ring: rgba(255, 59, 59, 0.55);
+  --lyra: #ff3b3b;
+  --lyra-strong: #e63333;
+  --elevated: #f7f7f9;
+  --panel: #ececf0;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html,
+  body {
+    height: 100%;
+  }
+  body {
+    @apply bg-canvas text-foreground;
+    font-feature-settings: "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* ---------- custom scrollbars ---------- */
+.lyra-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
+}
+.lyra-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.lyra-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+}
+:root:not(.dark) .lyra-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.18);
+}
+.lyra-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+:root:not(.dark) .lyra-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+.lyra-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ---------- ambient aurora for fullscreen player ---------- */
+@keyframes lyra-drift {
+  0% {
+    transform: translate3d(-12%, -8%, 0) scale(1.05) rotate(0deg);
+  }
+  33% {
+    transform: translate3d(8%, 6%, 0) scale(1.18) rotate(8deg);
+  }
+  66% {
+    transform: translate3d(-6%, 10%, 0) scale(1.12) rotate(-6deg);
+  }
+  100% {
+    transform: translate3d(-12%, -8%, 0) scale(1.05) rotate(0deg);
+  }
+}
+.lyra-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: 0.55;
+  animation: lyra-drift 26s ease-in-out infinite;
+  will-change: transform;
+  pointer-events: none;
+}
+
+/* ---------- marquee for long titles ---------- */
+@keyframes lyra-marquee {
+  0%,
+  12% {
+    transform: translateX(0);
+  }
+  88%,
+  100% {
+    transform: translateX(calc(-100% + var(--lyra-marquee-w, 120px)));
+  }
+}
+
+/* ---------- equalizer bars (now-playing indicator) ---------- */
+@keyframes lyra-eq {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+.lyra-eq-bar {
+  transform-origin: bottom;
+  animation: lyra-eq 0.9s ease-in-out infinite;
+}
+
+/* ---------- subtle spin for vinyl-ish disc ---------- */
+@keyframes lyra-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.lyra-spin {
+  animation: lyra-spin 24s linear infinite;
+}
+
+/* ---------- view transitions ---------- */
+.lyra-view-enter {
+  animation: lyra-fade-up 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes lyra-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- image fade-in ---------- */
+.lyra-img {
+  transition: opacity 0.4s ease;
+}
+
+/* shimmer skeleton */
+@keyframes lyra-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+.lyra-skeleton {
+  background: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0.04) 40%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.04) 60%
+  );
+  background-size: 200% 100%;
+  animation: lyra-shimmer 1.6s linear infinite;
+}
+:root:not(.dark) .lyra-skeleton {
+  background: linear-gradient(
+    100deg,
+    rgba(0, 0, 0, 0.05) 40%,
+    rgba(0, 0, 0, 0.1) 50%,
+    rgba(0, 0, 0, 0.05) 60%
+  );
+  background-size: 200% 100%;
+}
+
+/* range input (volume) — thin track */
+.lyra-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 999px;
+  outline: none;
+  cursor: pointer;
+}
+.lyra-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.lyra-range:hover::-webkit-slider-thumb,
+.lyra-range:focus-visible::-webkit-slider-thumb {
+  opacity: 1;
+}
+.lyra-range::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: none;
+  border-radius: 999px;
+  background: #fff;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.lyra-range:hover::-moz-range-thumb,
+.lyra-range:focus-visible::-moz-range-thumb {
+  opacity: 1;
+}

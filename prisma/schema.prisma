@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// A user-created playlist holding an ordered list of saved tracks
+model Playlist {
+  id        String          @id @default(cuid())
+  name      String
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  tracks    PlaylistTrack[]
+}
+
+// Ordered track rows inside a playlist (denormalized track snapshot)
+model PlaylistTrack {
+  id         String   @id @default(cuid())
+  playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  playlistId String
+  trackId    String
+  source     String   @default("audius")
+  title      String
+  artist     String
+  artistId   String?
+  artwork    String?
+  duration   Int      @default(0)
+  position   Int
+  createdAt  DateTime @default(now())
+
+  @@index([playlistId])
+}
+
+// Liked songs collection (single-user local library)
+model LikedTrack {
+  id        String   @id @default(cuid())
+  trackId   String   @unique
+  source    String   @default("audius")
+  title     String
+  artist    String
+  artistId  String?
+  artwork   String?
+  duration  Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+// Recently played feed
+model PlayHistory {
+  id       String   @id @default(cuid())
+  trackId  String
+  source   String   @default("audius")
+  title    String
+  artist   String
+  artistId String?
+  artwork  String?
+  duration Int      @default(0)
+  playedAt DateTime @default(now())
+
+  @@index([playedAt])
+}
