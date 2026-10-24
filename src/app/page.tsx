@@ -1,10 +1,8 @@
-import { MusicApp } from "@/components/music/music-app"
-import { ThemeProvider } from "@/components/theme-provider"
+import { redirect } from "next/navigation";
 
+// The real Liner web port (SPA built from tryliner/desktop) is served at
+// /liner/index.html and mapped to "/" via next.config.ts rewrites. This page
+// only acts as a fallback if the rewrite is bypassed.
 export default function Home() {
-  return (
-    <ThemeProvider>
-      <MusicApp />
-    </ThemeProvider>
-  )
+  redirect("/liner/index.html");
 }
