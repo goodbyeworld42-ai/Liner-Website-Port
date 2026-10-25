@@ -28,10 +28,13 @@ export default function AddToPlaylistModal() {
   );
 
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { data: playlistData } = usePlaylistsList();
+  const { data: playlistData, isLoading: playlistsLoading } = usePlaylistsList();
   const addTrack = useAddPlaylistTracks();
 
   const rawPlaylists = track?.playlists ?? playlistData?.playlists ?? [];
+  // cold cache: the list hook is still fetching — show a spinner instead of
+  // flashing the "no playlists yet" empty state for users who do have playlists
+  const playlistsPending = playlistsLoading && rawPlaylists.length === 0;
 
   const playlists = useMemo(() => {
     if (!searchQuery.trim()) return rawPlaylists;
@@ -226,6 +229,10 @@ export default function AddToPlaylistModal() {
                 )}
               </button>
             ))
+          ) : playlistsPending ? (
+            <div className="mx-[8px] flex items-center justify-center gap-[10px] rounded-md bg-bg-elevated/60 px-[12px] py-[24px]">
+              <span className="h-[16px] w-[16px] animate-spin rounded-full border-[2px] border-text-tertiary border-t-text-primary" />
+            </div>
           ) : (
             <div className="mx-[8px] flex flex-col items-center gap-[8px] rounded-md bg-bg-elevated/60 px-[12px] py-[24px] text-center">
               <span className="flex h-[36px] w-[36px] items-center justify-center rounded-full bg-bg-elevated text-text-tertiary">

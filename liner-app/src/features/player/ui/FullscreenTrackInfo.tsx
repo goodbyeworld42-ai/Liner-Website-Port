@@ -1,5 +1,6 @@
 import { useCallback, useRef } from "react";
 import { useLocation } from "react-router-dom";
+import { AddLine } from "@mingcute/react";
 import {
   useIsTrackLiked,
   useLikeTrack,
@@ -8,6 +9,7 @@ import {
 import { ArtistLink } from "@/features/artist";
 import { useTranslation } from "@/languages";
 import { usePlayerState } from "../hooks/usePlayerState";
+import { useAddCurrentTrackToPlaylist } from "../hooks/useAddCurrentTrackToPlaylist";
 import { LikeMorphIcon } from "./LikeMorphIcon";
 
 interface FullscreenTrackInfoProps {
@@ -23,6 +25,8 @@ export function FullscreenTrackInfo({ onClose }: FullscreenTrackInfoProps) {
   const likeMutation = useLikeTrack();
   const unlikeMutation = useUnlikeTrack();
   const togglingRef = useRef(false);
+  const { openAddToPlaylist: addTrackToPlaylist } =
+    useAddCurrentTrackToPlaylist();
 
   const handleLikeToggle = useCallback(() => {
     if (!track || togglingRef.current) return;
@@ -68,6 +72,16 @@ export function FullscreenTrackInfo({ onClose }: FullscreenTrackInfoProps) {
         className="relative inline-flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-full border-none bg-[#303030]/50 backdrop-blur-2xl backdrop-saturate-150 cursor-pointer text-white transition-colors duration-200 ease-out hover:bg-[#303030]/65 active:scale-[0.92]"
       >
         <LikeMorphIcon liked={Boolean(isLiked)} size={20} />
+      </button>
+
+      <button
+        type="button"
+        aria-label={t("common.add_to_playlist")}
+        title={t("common.add_to_playlist")}
+        onClick={addTrackToPlaylist}
+        className="inline-flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-full border-none bg-[#303030]/50 backdrop-blur-2xl backdrop-saturate-150 cursor-pointer text-white transition-colors duration-200 ease-out hover:bg-[#303030]/65 active:scale-[0.92]"
+      >
+        <AddLine size={20} />
       </button>
     </div>
   );

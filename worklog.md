@@ -232,3 +232,22 @@ Stage Summary:
 - Hover preview shipped: dwell 450ms on any song row -> 30s-capped faded preview of the real stream (Liner r2, YouTube, SoundCloud all via the shared resolver); silent while anything is playing/loading; stops on leave/click/tab-hide; toggle in Settings -> Playback, 12 locales, persisted
 - Production artifacts rebuilt and in sync (public/liner + .next/standalone, index-VM9XW8AY.js)
 - Artifacts: liner-app/src/features/player/engine/hoverPreview.ts (+ .test.ts), store/playerStore.ts, ui/SongCard.tsx, ui/SongCardWithMenu.tsx, hooks/usePlayerState.ts, features/settings/ui/tabs/PlaybackTab.tsx, ui/SettingsModal.tsx, 12 locale files, scripts/{add_hover_preview_locales.py,e2e-hover-preview.sh}
+
+---
+Task ID: 12
+Agent: main (Z.ai)
+Task: Add-to-playlist from the player bar — "+" button next to the like heart opens the Add-to-Playlist chooser; picking a playlist adds the current track
+
+Work Log:
+- The chooser already existed (AddToPlaylistModal: playlist list + search + create-new, global in AppFrame) but was only reachable from song context menus. This task added the player-bar entry the user sketched (screenshot: + beside the ♡ in the now-playing bar)
+- New hook liner-app/src/features/player/hooks/useAddCurrentTrackToPlaylist.ts: reads currentTrack via usePlayerStore selector, openAddToPlaylist() guards on track.id and pushes {id,title,artists,coverUrl,durationMs} into modalStore; exposes canAddToPlaylist
+- MiniPlayer.tsx: AddLine (mingcute, matches heart icon set) button after the like heart — same iconButtonClass/prevent-seek/pointer-events pattern, aria-label+title from existing i18n key common.add_to_playlist (all 12 locales already had it; zero new translations)
+- FullscreenTrackInfo.tsx: matching circular "add" button next to the like button (same glass style), same hook
+- AddToPlaylistModal: added playlistsPending loading branch (spinner instead of flashing "no playlists yet" while the cold playlists cache loads)
+- Tests: useAddCurrentTrackToPlaylist.test.tsx (4 cases: no-track no-op, modal opens with full track payload, empty-id guard, live store updates) using the createRoot+act pattern against real zustand stores; suite 707/707 (115 files, +4), tsc clean
+- E2E (3 rounds, scripts/e2e-add-to-playlist{,-2,-3}.sh): verified in sandbox — home row plays via click(detail=2) (rows play through onClick e.detail>=2, NOT dblclick events — synthetic dblclick does nothing, cost 2 rounds to find); + opens modal with current track; create-playlist path auto-adds the pending current track ("1 tracks"); row-click add shows "Added to playlist" toast + closes modal; reopening shows "2 tracks"; 409 already-in-playlist shows the error toast and keeps the modal open (correct upstream behavior); cleanup deleted the E2E playlist via the playlist page More menu (More is aria-label, not title attr); real playlists (Odetari&ODECORE/jujubotv) untouched
+- Harness lessons added: toast close buttons share aria-label="Close" with dialogs — scope close clicks to the dialog container; song rows play via click detail>=2 (dispatch MouseEvent('click',{detail:2})); player session restore makes the last track current after every reload — read barTitle before asserting play triggers
+
+Stage Summary:
+- Player bar now has the "+" add-to-playlist button the user sketched: click + -> chooser lists all playlists -> pick one -> track added (toast + modal closes); includes search, 409 handling, and create-new-playlist with auto-add; same entry added to the fullscreen player
+- Artifacts: liner-app/src/features/player/hooks/useAddCurrentTrackToPlaylist.{ts,test.tsx}, ui/MiniPlayer.tsx, ui/FullscreenTrackInfo.tsx, features/library/ui/modals/AddToPlaylistModal.tsx, scripts/e2e-add-to-playlist{,-2,-3}.sh; public/liner + .next/standalone rebuilt and verified byte-identical (App-yHQS2Qq3.js)

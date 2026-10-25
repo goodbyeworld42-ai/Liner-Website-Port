@@ -17,7 +17,7 @@ import {
   RepeatOne,
   Shuffle,
 } from "@solar-icons/react";
-import { HeartFill, HeartLine } from "@mingcute/react";
+import { HeartFill, HeartLine, AddLine } from "@mingcute/react";
 
 import { PlayerMorphIcon, ICON_PLAY, ICON_PAUSE } from "./morphPlayerIcons";
 
@@ -33,6 +33,7 @@ import {
   useUnlikeTrack,
 } from "@/features/library/hooks";
 import { usePlayerStore } from "../store/playerStore";
+import { useAddCurrentTrackToPlaylist } from "../hooks/useAddCurrentTrackToPlaylist";
 import { toVolumeGain, toVolumeLevel } from "../engine/volume";
 import { VolumeColumn } from "./VolumeColumn";
 import { SpeedPitchPicker } from "./SpeedPitchPicker";
@@ -345,6 +346,8 @@ function MiniPlayer({
   const likeMutation = useLikeTrack();
   const unlikeMutation = useUnlikeTrack();
   const togglingRef = useRef(false);
+  const { openAddToPlaylist: addCurrentTrackToPlaylist } =
+    useAddCurrentTrackToPlaylist();
 
   const handleLikeToggle = useCallback(() => {
     if (!currentTrack || togglingRef.current) return;
@@ -831,6 +834,17 @@ function MiniPlayer({
               style={{ cursor: "pointer" }}
             >
               {isLiked ? <HeartFill size={20} /> : <HeartLine size={20} />}
+            </button>
+            <button
+              type="button"
+              aria-label={t("common.add_to_playlist")}
+              title={t("common.add_to_playlist")}
+              className={`${iconButtonClass} shrink-0 transition-colors duration-150 pointer-events-auto prevent-seek text-text-secondary hover:text-text-primary`}
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={addCurrentTrackToPlaylist}
+              style={{ cursor: "pointer" }}
+            >
+              <AddLine size={20} />
             </button>
           </div>
 
