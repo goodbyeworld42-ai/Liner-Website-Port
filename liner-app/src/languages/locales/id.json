@@ -910,6 +910,10 @@
       "title": "Cover glow",
       "description": "Cahaya karya seni buram di belakang halaman. Matikan untuk latar polos.",
       "disabled_for_wallpaper": "Nonaktif selama wallpaper kustom dipasang."
+    },
+    "hover_preview": {
+      "title": "Pratinjau lagungan saat diarahkan",
+      "description": "Arahkan kursor ke lagu untuk mendengar cuplikan singkat. Hanya diputar saat tidak ada lagu lain yang sedang diputar."
     }
   },
   "toast": {

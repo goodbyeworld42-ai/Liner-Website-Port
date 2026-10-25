@@ -830,6 +830,10 @@
       "title": "Kapak parıltısı",
       "description": "Sayfaların arkasında bulanık kapak parıltısı. Düz arka plan için kapatın.",
       "disabled_for_wallpaper": "Özel duvar kâğıdı ayarlıyken kapalı."
+    },
+    "hover_preview": {
+      "title": "Üzerine gelince şarkı önizleme",
+      "description": "Kısa bir önizleme duymak için imleci bir şarkının üzerinde tut. Başka bir şey çalarken yalnızca çalar."
     }
   },
   "toast": {

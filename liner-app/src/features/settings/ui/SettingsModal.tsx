@@ -139,6 +139,11 @@ const SETTING_ITEMS: { tabId: TabId; titleKey: string; descKey?: string }[] = [
   // Playback
   {
     tabId: "Playback",
+    titleKey: "settings.hover_preview.title",
+    descKey: "settings.hover_preview.description",
+  },
+  {
+    tabId: "Playback",
     titleKey: "settings.autoplay_similar.title",
     descKey: "settings.autoplay_similar.description",
   },

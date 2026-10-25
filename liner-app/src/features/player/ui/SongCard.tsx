@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { More2Fill, RepeatFill } from "@mingcute/react";
 import DropdownMenu from "@/shared/ui/DropdownMenu";
 import type { DropdownMenuItem } from "@/shared/ui/DropdownMenu";
@@ -8,6 +8,8 @@ import HighlightedText from "@/shared/ui/HighlightedText";
 import ExplicitBadge from "@/shared/ui/ExplicitBadge";
 import CoverImage from "@/features/covers/ui/CoverImage";
 import { isCoverReady } from "@/features/covers/lib/coverArt";
+import { hoverPreview } from "../engine/hoverPreview";
+import type { PlayableTrack } from "../engine/playbackStream";
 import type { TrackArtist } from "@/shared/types";
 
 export interface SongCardProps {
@@ -41,6 +43,8 @@ export interface SongCardProps {
   highlight?: string;
   hideArtists?: boolean;
   trailingAction?: React.ReactNode;
+  /** when set, hovering the row plays a short preview of this track */
+  previewTrack?: PlayableTrack | null;
 }
 
 function SongCard({
@@ -72,10 +76,29 @@ function SongCard({
   highlight,
   hideArtists = false,
   trailingAction,
+  previewTrack,
 }: SongCardProps) {
   const { t } = useTranslation();
   const [imageLoaded, setImageLoaded] = useState(() => isCoverReady(coverUrl));
   const clickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const previewKey = previewTrack?.id ?? null;
+
+  useEffect(() => {
+    return () => {
+      if (previewKey) hoverPreview.hoverEnd(previewKey);
+    };
+  }, [previewKey]);
+
+  const handleMouseEnter = useCallback(() => {
+    if (!previewTrack) return;
+    hoverPreview.hoverStart(previewTrack);
+  }, [previewTrack]);
+
+  const handleMouseLeave = useCallback(() => {
+    if (!previewTrack) return;
+    hoverPreview.hoverEnd(previewTrack.id);
+  }, [previewTrack]);
 
   useEffect(() => {
     setImageLoaded(isCoverReady(coverUrl));
@@ -130,6 +153,8 @@ function SongCard({
         className ?? ""
       } ${onPlay ? "cursor-pointer" : ""} ${onPlay && !className?.includes("hover:bg-") ? "hover:bg-border-alpha-14" : ""}`}
       onClick={handleClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       onPointerDown={(e) => {
         if (clickTimerRef.current) {
           clearTimeout(clickTimerRef.current);

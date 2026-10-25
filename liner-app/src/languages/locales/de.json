@@ -775,6 +775,10 @@
       "title": "Cover-Leuchten",
       "description": "Unscharfes Cover-Leuchten hinter Seiten. Ausschalten für einen schlichten Hintergrund.",
       "disabled_for_wallpaper": "Aus, solange ein eigenes Hintergrundbild gesetzt ist."
+    },
+    "hover_preview": {
+      "title": "Songs beim Hover vorhören",
+      "description": "Bewege den Mauszeiger über einen Song, um eine kurze Vorschau zu hören. Spielt nur, wenn gerade nichts anderes abgespielt wird."
     }
   },
   "toast": {

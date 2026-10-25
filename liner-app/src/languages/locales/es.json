@@ -884,6 +884,10 @@
       "title": "Brillo de portada",
       "description": "Brillo difuminado de la portada tras las páginas. Desactívalo para un fondo liso.",
       "disabled_for_wallpaper": "Desactivado mientras haya un fondo de pantalla personalizado."
+    },
+    "hover_preview": {
+      "title": "Previsualizar canciones al pasar el cursor",
+      "description": "Pasa el cursor sobre una canción para escuchar una vista previa breve. Solo suena mientras no se esté reproduciendo nada más."
     }
   },
   "toast": {

@@ -211,3 +211,24 @@ Stage Summary:
 - Playback of imported/niche playlist tracks requires YouTube sign-in (Settings -> YouTube) — anonymous playback is blocked by YouTube itself from our datacenter IP (verified across 6 client classes with valid PO tokens); cached mainstream tracks keep playing regardless
 - Not verifiable in sandbox: the final account-authorized SABR request needs real YouTube consent (Google blocks automated browsers) — every other link in that chain is verified end-to-end
 - Artifacts: src/app/api/po-token/route.ts, src/app/api/youtube/tv-session/route.ts, src/lib/youtube/n-solver.ts (kept for reference), liner-app/src/shared/youtube/tv/{tvWorker.ts,nSolver.ts,nFactory.ts}, liner-app/src/shared/youtube/innertube/webRemixAudio.ts; package.json (+bgutils-js, +jsdom, +meriyah in shell); scripts/potoken-*.mjs, tv-anonymous-test.mjs (experiment harnesses); public/liner + .next/standalone rebuilt
+
+---
+Task ID: 11
+Agent: main (Z.ai)
+Task: Hover preview on songs — hovering a song row plays a short preview; only when nothing is playing; settings toggle to turn it off
+
+Work Log:
+- New engine module liner-app/src/features/player/engine/hoverPreview.ts: singleton HoverPreviewController with 450ms dwell delay, dedicated hidden Audio element (no crossOrigin so CORS-less sources still play), stream resolution via the SAME resolvePlaybackStream the player uses (progressive: true), rewriteForWeb media-proxy rewrite, fade-in (120ms) to the current player volume, 30s hard cap, fade-out (180ms) on stop, AbortController on in-flight resolution, stream.release() for discarded TV-progressive streams, blob URL revoke, visibilitychange -> immediate stop, row-scoped hoverEnd(key) so a sibling row unmounting never kills an unrelated preview
+- Gate: preview only starts when player status is idle/paused/error — NEVER while playing/loading (user request: "only play if i dont have any song playing"); restored sessions (status paused) still preview. Store subscription hard-stops the preview the instant status flips to playing/loading (click, resume, media key) or the setting is turned off
+- playerStore: session setting hoverPreview (default true, persisted via partialize + rehydrate guard, setHoverPreview)
+- SongCard: new previewTrack prop wires onMouseEnter/onMouseLeave + unmount cleanup to the controller; SongCardWithMenu builds previewTrack from id/title/artists/resolvedDurationMs when id && onPlay — covers every song list (playlists, search, artist, collection, home, queue drawer); MiniPlayer queue rows intentionally excluded
+- Settings: Playback tab first row "Preview songs on hover" (ToggleSwitch) + SettingsModal search registration
+- i18n: settings.hover_preview.{title,description} added to all 12 locales (scripts/add_hover_preview_locales.py, parity-asserted)
+- Tests: hoverPreview.test.ts 12 cases (guards, cancel-before-delay, r2/media URL rewrite, blob objectURL lifecycle + revoke, stop on real playback start, dwell ending busy, row-scoped hoverEnd, row switching, failed resolution recovery, mid-preview setting-off); suite 703/703 (+12), tsc clean
+- E2E (sandbox, scripts/e2e-hover-preview.sh): verified via synthetic React events + in-page play() stub (harness CDP input never lands on the page and headless autoplay blocks play() without activation — the organic NotAllowedError catch was captured in console, proving the graceful path): preview attaches real r2 stream through /api/media and fades to volume 1, row switch re-resolves, mouseleave detaches (src NULL), hover during real loading/playing blocked (play stub called only by main audio), setting off blocks + persists (localStorage hoverPreview), setting on restores, main #liner-audio untouched during previews
+- Harness lessons (for future tasks): agent-browser mouse/click-by-coordinates does NOT reach the page (userActivation stays false, React handlers silent) — use synthetic dispatchEvent or locator/ref commands for UI, JS clicks for modal internals; settings modal must be closed (Close button aria-label "Close") before interacting with page content; home feed reflows while loading so measured coordinates go stale; $AB console ACCUMULATES logs across runs (use --clear); evals MUST be IIFE-invoked `})()` or they return {}
+
+Stage Summary:
+- Hover preview shipped: dwell 450ms on any song row -> 30s-capped faded preview of the real stream (Liner r2, YouTube, SoundCloud all via the shared resolver); silent while anything is playing/loading; stops on leave/click/tab-hide; toggle in Settings -> Playback, 12 locales, persisted
+- Production artifacts rebuilt and in sync (public/liner + .next/standalone, index-VM9XW8AY.js)
+- Artifacts: liner-app/src/features/player/engine/hoverPreview.ts (+ .test.ts), store/playerStore.ts, ui/SongCard.tsx, ui/SongCardWithMenu.tsx, hooks/usePlayerState.ts, features/settings/ui/tabs/PlaybackTab.tsx, ui/SettingsModal.tsx, 12 locale files, scripts/{add_hover_preview_locales.py,e2e-hover-preview.sh}

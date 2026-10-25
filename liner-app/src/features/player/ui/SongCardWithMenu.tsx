@@ -2,6 +2,7 @@ import { memo, useCallback, useMemo, useState } from "react";
 import SongCard from "./SongCard";
 import { useSongMenuItems } from "../hooks/useSongMenuItems";
 import { playerEngine } from "../engine/playerEngine";
+import type { PlayableTrack } from "../engine/playbackStream";
 import { usePlayerStore } from "../store/playerStore";
 import { useToast } from "@/shared/ui";
 import { useTranslation } from "@/languages";
@@ -102,6 +103,12 @@ function SongCardWithMenu({
     y: number;
   } | null>(null);
 
+  // hovering the row auditions this track (only when nothing is playing)
+  const previewTrack = useMemo<PlayableTrack | undefined>(() => {
+    if (!id || !onPlay) return undefined;
+    return { id, title, artists: artists ?? "", durationMs: resolvedDurationMs };
+  }, [id, title, artists, resolvedDurationMs, onPlay]);
+
   const { t } = useTranslation();
   const { toast } = useToast();
   const trackDoubleClickBehavior = usePlayerStore(
@@ -183,6 +190,7 @@ function SongCardWithMenu({
       showReorderHandle={showReorderHandle}
       onGrabStart={onGrabStart}
       trailingAction={trailingAction}
+      previewTrack={previewTrack}
     />
   );
 }

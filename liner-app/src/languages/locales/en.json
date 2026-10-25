@@ -910,6 +910,10 @@
       "title": "Cover glow",
       "description": "Blurred artwork glow behind pages. Turn off to keep a plain background.",
       "disabled_for_wallpaper": "Off while a custom wallpaper is set."
+    },
+    "hover_preview": {
+      "title": "Preview songs on hover",
+      "description": "Hover a song to hear a short preview. Only plays while nothing else is playing."
     }
   },
   "toast": {

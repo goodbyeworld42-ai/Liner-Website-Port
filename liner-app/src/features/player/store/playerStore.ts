@@ -54,6 +54,7 @@ export interface SessionState {
   accentVariant: AccentVariant;
   pauseOnDeviceChange: boolean;
   autoplaySimilar: boolean;
+  hoverPreview: boolean;
   trackDoubleClickBehavior: TrackDoubleClickBehavior;
   defaultPlaybackContext: DefaultPlaybackContext;
   fullscreen: boolean;
@@ -108,6 +109,7 @@ export interface PlayerStore extends PlayerState {
   setAccentVariant: (variant: AccentVariant) => void;
   setPauseOnDeviceChange: (value: boolean) => void;
   setAutoplaySimilar: (value: boolean) => void;
+  setHoverPreview: (value: boolean) => void;
   setTrackDoubleClickBehavior: (value: TrackDoubleClickBehavior) => void;
   setDefaultPlaybackContext: (value: DefaultPlaybackContext) => void;
   setFullscreen: (value: boolean) => void;
@@ -152,6 +154,7 @@ export const usePlayerStore = create<PlayerStore>()(
       accentVariant: "default",
       pauseOnDeviceChange: true,
       autoplaySimilar: true,
+      hoverPreview: true,
       trackDoubleClickBehavior: "play",
       defaultPlaybackContext: "resume",
       fullscreen: false,
@@ -195,6 +198,7 @@ export const usePlayerStore = create<PlayerStore>()(
         set({ pauseOnDeviceChange }),
       setAutoplaySimilar: (autoplaySimilar: boolean) =>
         set({ autoplaySimilar }),
+      setHoverPreview: (hoverPreview: boolean) => set({ hoverPreview }),
       setTrackDoubleClickBehavior: (
         trackDoubleClickBehavior: TrackDoubleClickBehavior,
       ) => set({ trackDoubleClickBehavior }),
@@ -300,6 +304,9 @@ export const usePlayerStore = create<PlayerStore>()(
           if (typeof state.isReverbEnabled !== "boolean") {
             state.isReverbEnabled = false;
           }
+          if (typeof state.hoverPreview !== "boolean") {
+            state.hoverPreview = true;
+          }
           if (
             typeof state.reverbLevel !== "number" ||
             isNaN(state.reverbLevel)
@@ -329,6 +336,7 @@ export const usePlayerStore = create<PlayerStore>()(
         accentVariant: state.accentVariant,
         pauseOnDeviceChange: state.pauseOnDeviceChange,
         autoplaySimilar: state.autoplaySimilar,
+        hoverPreview: state.hoverPreview,
         trackDoubleClickBehavior: state.trackDoubleClickBehavior,
         defaultPlaybackContext: state.defaultPlaybackContext,
         playbackRate: state.playbackRate,

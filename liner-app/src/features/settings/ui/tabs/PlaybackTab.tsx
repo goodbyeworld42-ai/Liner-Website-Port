@@ -29,6 +29,8 @@ export function PlaybackTab({ searchQuery }: { searchQuery?: string }) {
   const setPauseOnDeviceChange = usePlayerStore(
     (state) => state.setPauseOnDeviceChange,
   );
+  const hoverPreview = usePlayerStore((state) => state.hoverPreview);
+  const setHoverPreview = usePlayerStore((state) => state.setHoverPreview);
 
   useEffect(() => {
     setMounted(true);
@@ -36,6 +38,20 @@ export function PlaybackTab({ searchQuery }: { searchQuery?: string }) {
 
   return (
     <SettingSection>
+
+      <SettingRow
+        title={t("settings.hover_preview.title")}
+        description={t("settings.hover_preview.description")}
+        titleKey="settings.hover_preview.title"
+        descKey="settings.hover_preview.description"
+        searchQuery={searchQuery}
+        control={
+          <ToggleSwitch
+            checked={hoverPreview}
+            onChange={setHoverPreview}
+          />
+        }
+      />
 
       <SettingRow
         title={t("settings.autoplay_similar.title")}

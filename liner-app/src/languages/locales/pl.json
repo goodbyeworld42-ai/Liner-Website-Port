@@ -834,6 +834,10 @@
       "title": "Poświata okładki",
       "description": "Rozmyta poświata okładki za stronami. Wyłącz, aby zostawić jednolite tło.",
       "disabled_for_wallpaper": "Wyłączone, gdy ustawiona jest własna tapeta."
+    },
+    "hover_preview": {
+      "title": "Podgląd utworów po najechaniu",
+      "description": "Najedź kursorem na utwór, aby usłyszeć krótki fragment. Działa tylko wtedy, gdy nic innego nie jest odtwarzane."
     }
   },
   "toast": {

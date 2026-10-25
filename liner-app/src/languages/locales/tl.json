@@ -910,6 +910,10 @@
       "title": "Cover glow",
       "description": "Blurred artwork glow sa likod ng mga pahina. I-off para sa simpleng background.",
       "disabled_for_wallpaper": "Naka-off habang may custom wallpaper."
+    },
+    "hover_preview": {
+      "title": "I-preview ang kanta sa hover",
+      "description": "I-hover ang isang kanta para makinig ng maikling preview. Tumatugtog lang kapag walang ibang tumutugtog."
     }
   },
   "toast": {

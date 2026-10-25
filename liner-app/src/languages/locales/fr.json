@@ -832,6 +832,10 @@
       "title": "Halo de pochette",
       "description": "Halo flouté de la pochette derrière les pages. Désactivez pour un fond uni.",
       "disabled_for_wallpaper": "Désactivé tant qu'un fond d'écran personnalisé est défini."
+    },
+    "hover_preview": {
+      "title": "Aperçu des titres au survol",
+      "description": "Survolez un titre pour écouter un court extrait. Ne fonctionne que lorsque rien d'autre n'est en lecture."
     }
   },
   "toast": {

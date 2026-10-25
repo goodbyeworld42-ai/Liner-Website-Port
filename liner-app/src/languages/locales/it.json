@@ -830,6 +830,10 @@
       "title": "Bagliore copertina",
       "description": "Bagliore sfocato della copertina dietro le pagine. Disattiva per uno sfondo semplice.",
       "disabled_for_wallpaper": "Disattivato finché è impostato uno sfondo personalizzato."
+    },
+    "hover_preview": {
+      "title": "Anteprima dei brani al passaggio del mouse",
+      "description": "Passa il mouse sopra un brano per ascoltare una breve anteprima. Riproduce solo quando non c'è altro in riproduzione."
     }
   },
   "toast": {
