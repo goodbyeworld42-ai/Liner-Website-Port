@@ -464,7 +464,8 @@
       "overlay": "Overlay",
       "discord": "Discord RPC",
       "youtube": "YouTube",
-      "privacy": "Privacy"
+      "privacy": "Privacy",
+      "customization": "Customization"
     },
     "playback": {
       "description": "Gawi ng pila, aksyon sa pag-click at audio output."
@@ -729,7 +730,8 @@
       "description": "Pumili ng pangkalahatang itsura ng app.",
       "light": "Maliwanag",
       "dark": "Madilim",
-      "system": "System"
+      "system": "System",
+      "disabled_for_glass": "Naka-off ang light theme kapag gumagamit ng custom wallpaper glassmorphism."
     },
     "branding": {
       "title": "Branding",
@@ -852,6 +854,49 @@
     },
     "connection": {
       "open_folder": "Buksan ang naka-save na lokasyon"
+    },
+    "customization": {
+      "description": "Wallpaper ng background ng window, transparency at block blur effects.",
+      "apply_to_overlay": "I-apply sa overlay mini player",
+      "apply_to_overlay_desc": "Ipakita ang custom background at glass styling sa floating mini player.",
+      "dark_theme_only": "Available lang ang customization sa dark theme",
+      "wallpaper_title": "Wallpaper ng Window",
+      "wallpaper_description": "Magtakda ng custom na imahe o animated GIF bilang buong background ng window.",
+      "upload_title": "Pumili ng imahe o animated GIF",
+      "upload_hint": "PNG, JPEG, GIF, WebP (hanggang 30MB)",
+      "change_button": "Palitan",
+      "remove_button": "Alisin",
+      "wallpaper_blur": "Blur ng wallpaper",
+      "wallpaper_dim": "Dimming ng wallpaper",
+      "blocks_title": "Glassmorphism ng Interface Blocks",
+      "blocks_description": "I-adjust ang transparency, backdrop blur at dimming para sa bawat bahagi ng interface.",
+      "block_sidebar": "Sidebar",
+      "block_content": "Content View",
+      "block_miniplayer": "Miniplayer",
+      "opacity": "Opacity (transparency)",
+      "opacity_desc": "Antas ng opacity ng background (min. 25%)",
+      "blur": "Backdrop blur",
+      "blur_desc": "Tindi ng frosted glass blur",
+      "dim": "Dimming",
+      "dim_desc": "Madilim na overlay para mas madaling mabasa",
+      "apply_all": "Sa lahat",
+      "apply_all_title": "I-apply ang settings sa lahat ng blocks",
+      "applied_to_all": "Na-apply ang settings sa lahat ng blocks",
+      "reset_block": "I-reset",
+      "block_reset": "Na-reset ang block settings",
+      "reset_all": "I-reset lahat ng customization",
+      "reset_all_desc": "Ibalik ang default na itsura, burahin ang background image at block glass effects.",
+      "all_reset": "Na-reset lahat ng customization",
+      "applied": "Na-apply ang wallpaper",
+      "removed": "Inalis ang wallpaper",
+      "invalid_file_type": "Pumili ng image o GIF file",
+      "file_too_large": "Dapat mas maliit sa 30 MB ang file",
+      "read_error": "Nabigo ang pagbasa ng image file"
+    },
+    "cover_glow": {
+      "title": "Cover glow",
+      "description": "Blurred artwork glow sa likod ng mga pahina. I-off para sa simpleng background.",
+      "disabled_for_wallpaper": "Naka-off habang may custom wallpaper."
     }
   },
   "toast": {

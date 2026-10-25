@@ -464,7 +464,8 @@
       "overlay": "Overlay",
       "discord": "Discord RPC",
       "youtube": "YouTube",
-      "privacy": "Privasi"
+      "privacy": "Privasi",
+      "customization": "Kustomisasi"
     },
     "playback": {
       "description": "Perilaku antrean, aksi klik, dan keluaran audio."
@@ -729,7 +730,8 @@
       "description": "Pilih tampilan keseluruhan aplikasi.",
       "light": "Terang",
       "dark": "Gelap",
-      "system": "Sistem"
+      "system": "Sistem",
+      "disabled_for_glass": "Tema terang dinonaktifkan saat menggunakan glassmorphism wallpaper kustom."
     },
     "branding": {
       "title": "Branding",
@@ -852,6 +854,49 @@
     },
     "connection": {
       "open_folder": "Buka lokasi tersimpan"
+    },
+    "customization": {
+      "description": "Wallpaper latar jendela, transparansi, dan efek blur blok.",
+      "apply_to_overlay": "Terapkan ke mini player overlay",
+      "apply_to_overlay_desc": "Tampilkan latar kustom dan gaya kaca pada mini player mengambang.",
+      "dark_theme_only": "Kustomisasi hanya tersedia untuk tema gelap",
+      "wallpaper_title": "Wallpaper Jendela",
+      "wallpaper_description": "Atur gambar kustom atau GIF animasi sebagai latar jendela penuh.",
+      "upload_title": "Pilih gambar atau GIF animasi",
+      "upload_hint": "PNG, JPEG, GIF, WebP (hingga 30MB)",
+      "change_button": "Ubah",
+      "remove_button": "Hapus",
+      "wallpaper_blur": "Blur wallpaper",
+      "wallpaper_dim": "Peredupan wallpaper",
+      "blocks_title": "Glassmorphism Blok Antarmuka",
+      "blocks_description": "Sesuaikan transparansi, blur latar, dan peredupan untuk setiap area antarmuka.",
+      "block_sidebar": "Sidebar",
+      "block_content": "Tampilan Konten",
+      "block_miniplayer": "Miniplayer",
+      "opacity": "Opasitas (transparansi)",
+      "opacity_desc": "Tingkat opasitas latar (min. 25%)",
+      "blur": "Blur latar",
+      "blur_desc": "Intensitas blur kaca buram",
+      "dim": "Peredupan",
+      "dim_desc": "Overlay gelap untuk keterbacaan lebih baik",
+      "apply_all": "Ke semua",
+      "apply_all_title": "Terapkan pengaturan ke semua blok",
+      "applied_to_all": "Pengaturan diterapkan ke semua blok",
+      "reset_block": "Reset",
+      "block_reset": "Pengaturan blok direset",
+      "reset_all": "Reset semua kustomisasi",
+      "reset_all_desc": "Kembalikan tampilan bawaan, hapus gambar latar dan efek kaca blok.",
+      "all_reset": "Semua kustomisasi direset",
+      "applied": "Wallpaper diterapkan",
+      "removed": "Wallpaper dihapus",
+      "invalid_file_type": "Pilih file gambar atau GIF",
+      "file_too_large": "Ukuran file harus di bawah 30 MB",
+      "read_error": "Gagal membaca file gambar"
+    },
+    "cover_glow": {
+      "title": "Cover glow",
+      "description": "Cahaya karya seni buram di belakang halaman. Matikan untuk latar polos.",
+      "disabled_for_wallpaper": "Nonaktif selama wallpaper kustom dipasang."
     }
   },
   "toast": {

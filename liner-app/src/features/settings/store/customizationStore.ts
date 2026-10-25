@@ -39,7 +39,9 @@ export const MIN_BLUR = 10;
 export const MAX_BLUR = 40;
 export const MIN_DIM = 8;
 export const MAX_DIM = 85;
-export const MIN_WALLPAPER_BLUR = MIN_BLUR;
+// Website port: restore the pre-v0.2.10 wallpaper blur range (slider allowed 0).
+// Upstream redesign re-added customization with MIN_WALLPAPER_BLUR = MIN_BLUR (10px).
+export const MIN_WALLPAPER_BLUR = 0;
 
 export const DEFAULT_BLOCK_CONFIG: BlockCustomization = {
   opacity: 100,
