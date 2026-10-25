@@ -119,3 +119,25 @@ Stage Summary:
 - YouTube sign-in is now resilient to transient proxy/Google hiccups: no more "Try again" death loop; the dialog waits (and auto-refreshes expired codes) until the user completes approval at google.com/device / yt.be/activate or scans the QR
 - Google consent still must be done by the user in their own browser (Google blocks automated browsers) — unchanged external constraint
 - Artifacts: liner-app/src/shared/youtube/auth/{tvTokens,tvDeviceFlow}.ts, src/app/api/fetch/route.ts, 2 test files; public/liner rebuilt
+
+---
+Task ID: 7
+Agent: main (Z.ai)
+Task: Restore pre-v0.2.10 customizations (custom wallpaper + blur min 0); diagnose liner-music.space-z.ai sign-in failure
+
+Work Log:
+- Diagnosed deployed site: liner-music.space-z.ai serves the SPA (200) but /api/fetch returns 500 even for trivial requests (google generate_204) — the deployed snapshot's server proxy is broken/stale (predates undici maxHeaderSize + retry fixes from Tasks 3/6). SPA files there are fine; it needs a re-publish of the fixed project. Nothing wrong with the app itself — preview sandbox has all fixes live
+- GitHub re-check (user request): upstream main moved 30f319d -> 04d4519 with exactly the wanted feature: 09792f0 (catalog 403 retry + /v1/catalog fallback), 290c11d (wallpaper customization on the redesign, cover glow, CustomizationTab), 04d4519 (cover glow locked off while wallpaper set)
+- Old-vs-new blur comparison: pre-v0.2.10 (v0.1.40) wallpaper blur slider was min=0 max=30 with default 0; upstream re-add forces MIN_WALLPAPER_BLUR = MIN_BLUR = 10. Confirmed user request = restore 0
+- Ported all 3 upstream commits into liner-app via git cherry-pick (fetched gh/main directly; local shallow mirror was truncated). 3 rename-artifact conflicts resolved (new files landing at repo-root src/ -> relocated under liner-app/src/). Modified files (incl. en/ru/uk/de/es/fr/it/pl/pt/tr locales) auto-merged at correct liner-app/src paths; en.json build_info "Website port" branding verified intact
+- Website-port tweak: customizationStore MIN_WALLPAPER_BLUR = 0 (comment explains pre-v0.2.10 restoration). One constant drives slider min, default, clamps and migration. Block backdrop blur stays MIN_BLUR=10 (same as old version)
+- Added all new keys (settings.tabs.customization, settings.theme.disabled_for_glass, settings.customization x36, settings.cover_glow x3) to tl.json + id.json via scripts/add_customization_locales.py with en-parity assertions (Tagalog + Bahasa Indonesia translations, placement mirrors upstream ordering)
+- Deps: liner-app/node_modules was wiped by session restart; npm install restored (package-lock.json generated + committed)
+- Verification: tsc -b clean; vitest 676/676 passing (18 new upstream tests); vite build 2.12s; deployed to public/liner
+- Browser-verified end-to-end (agent-browser, JS clicks — mouse input never reached the modal, known harness trap): Settings -> Interface -> Customization tab renders; wallpaper fed through the REAL file-input change handler (canvas-generated PNG via DataTransfer) -> validation -> FileReader -> store -> IndexedDB liner_customization_db/wallpapers/active_wallpaper (666KB data URL); AppFrame renders it behind the app; "Wallpaper blur" slider min=0 max=30 default 0; ArrowRight stepping updates preview filter, Home -> 0 removes filter entirely (no 10px clamp); cover glow toggle correctly disabled while wallpaper set; "Reset to defaults" clears UI state + DB row (initial "bug" was me clicking the per-block "Reset" — no app bug). Screenshots saved to download/
+- Locale sanity: en/tl/id customization+cover_glow key parity 36+3/36+3/36+3
+
+Stage Summary:
+- Customization restored in the preview: custom wallpaper (PNG/JPEG/GIF/WebP up to 30MB) with per-block glassmorphism (sidebar/content/miniplayer opacity-blur-dim), wallpaper blur slider min 0 (pre-v0.2.10 range), cover glow toggle — all faithful upstream code, plus Tagalog/Indonesian translations
+- liner-music.space-z.ai is a broken stale snapshot (server proxy 500s on every call): needs a re-publish from the fixed sandbox project; the preview URL is fully working
+- Artifacts: liner-app/src/features/settings/{store/customizationStore.ts,hooks/useThemeCustomizationSync.ts,ui/tabs/CustomizationTab.tsx} (+tests), features/library/lib/likesCoverPalette.ts, features/library/hooks/useLikesCover.ts, shared/youtube/innertube/innertubeClient.ts (403 retry), locales tl/id updated + 10 upstream locales restored, public/liner rebuilt
