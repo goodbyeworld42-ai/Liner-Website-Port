@@ -251,3 +251,23 @@ Work Log:
 Stage Summary:
 - Player bar now has the "+" add-to-playlist button the user sketched: click + -> chooser lists all playlists -> pick one -> track added (toast + modal closes); includes search, 409 handling, and create-new-playlist with auto-add; same entry added to the fullscreen player
 - Artifacts: liner-app/src/features/player/hooks/useAddCurrentTrackToPlaylist.{ts,test.tsx}, ui/MiniPlayer.tsx, ui/FullscreenTrackInfo.tsx, features/library/ui/modals/AddToPlaylistModal.tsx, scripts/e2e-add-to-playlist{,-2,-3}.sh; public/liner + .next/standalone rebuilt and verified byte-identical (App-yHQS2Qq3.js)
+
+---
+Task ID: 13
+Agent: main (Z.ai)
+Task: Fix "some songs not loading / unavailable after YouTube sign-in; spotify + playlist songs not loading" (user asked to check upstream github)
+
+Work Log:
+- Reproduced in sandbox (e2e13 script): r2-cached tracks play; uncached imported-playlist tracks fail — console shows "WEB_REMIX attempt 1/2 failed: Sign in to confirm you're not a bot", and the signed-in TV SABR chain never engages (no session in sandbox browser)
+- Checked upstream tryliner/desktop: origin/main is 3 commits past our v0.2.10 snapshot; the relevant one (09792f0 fresh-visitor-session retry on 401/403 + /v1/catalog routes) is ALREADY in our port (innertubeClient has the retry, api.ts uses /v1/catalog/*); the other two are wallpaper/glow UI we shipped earlier. No upstream playback fix left to port
+- ROOT CAUSE (web-port bug): /api/yt proxy flattened EVERY youtubei call onto music.youtube.com — but the desktop sends all playback-profile player requests (TVHTML5 / VISIONOS / ANDROID_VR, including the account-authorized one carrying the user's YouTube OAuth token) to www.youtube.com. TV-family client contexts are only trusted on the host a real TV client uses, so the signed-in playback chain was structurally broken on the web
+- Fix: webProxy rewrite keeps the host — www.youtube.com/youtubei/* -> /api/yt/www/*, music stays /api/yt/*; new shared src/lib/innertube-proxy.ts (proxyInnertube + OPTIONS), thin routes /api/yt/[...path] (music) and /api/yt/www/[...path] (www); YT_UPSTREAM_WWW added to liner-proxy.ts
+- Caught + fixed a self-inflicted regression during refactor: missing "/" after youtubei (youtubeiv1/player) made BOTH proxies return YouTube's 400 Oops page — found via a temporary x-debug-echo header, verified fixed
+- Host-routing proof (scripts/verify-yt-host-routing.sh): identical TV player request direct-to-www vs /api/yt/www -> same real player response (status OK / streamingData present at time of test); old route at music host compared; standalone runtime re-verified under node server.js
+- Experiments (scripts/tv-url-{availability,round2}.mjs): anonymous TV player without tokens returns OK but formats carry NO stream URLs (PO-token gating — desktop uses the SABR chain instead); with tv-session visitorData or tokens -> LOGIN_REQUIRED; YouTube enforcement FLAPS per IP reputation (the same plain request returned OK then LOGIN_REQUIRED within 30 min). Re-confirms: anonymous uncached playback from a datacenter IP is not reliably fixable; the signed-in TV SABR path (now correctly routed) is the mechanism for imported tracks
+- Suite 708/708 (+1 webProxy host test), liner-app tsc clean; SPA rebuilt; standalone rebuilt (route table shows /api/yt/www/[...path]) and pub/standalone bundles byte-identical
+
+Stage Summary:
+- The account-authorized YouTube playback chain now reaches the same host the desktop uses — this is the fix candidate for the user's "imported playlist songs not loading/unavailable" when signed in; user must hard-refresh and verify with their session (sandbox has no YouTube session to reproduce signed-in playback end-to-end)
+- Cached/mainstream tracks keep playing regardless; anonymous fallback paths remain IP-reputation-dependent (YouTube-side, flapping, unchanged)
+- Artifacts: liner-app/src/shared/lib/webProxy.ts (+ test), src/lib/innertube-proxy.ts, src/app/api/yt/[...path]/route.ts, src/app/api/yt/www/[...path]/route.ts, src/lib/liner-proxy.ts (+YT_UPSTREAM_WWW), scripts/{verify-yt-host-routing.sh, tv-url-availability-test.mjs, tv-url-round2.mjs, e2e13-diagnose-imported-playback.sh}; public/liner + .next/standalone rebuilt

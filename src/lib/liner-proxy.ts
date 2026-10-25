@@ -2,6 +2,9 @@
 // Mirrors the host map in liner-app/src/shared/lib/webProxy.ts.
 
 export const YT_UPSTREAM = "https://music.youtube.com";
+// playback-profile origin (TVHTML5 / VISIONOS / ANDROID_VR) — see
+// /api/yt/www/[...path]; the desktop sends those player requests here
+export const YT_UPSTREAM_WWW = "https://www.youtube.com";
 export const SC_UPSTREAM = "https://api-v2.soundcloud.com";
 
 // generic JSON/text upstreams (oauth, imports, clientId discovery, ...)

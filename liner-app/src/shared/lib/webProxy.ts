@@ -103,11 +103,16 @@ export function rewriteForWeb(rawUrl: string, method?: string): string {
   // (music.youtube.com is the WEB_REMIX catalog origin; www.youtube.com hosts
   // the TV / visionOS / Android VR playback profiles — both need the proxy so
   // x-liner-user-agent can be mapped to a real User-Agent upstream)
+  // The host distinction matters: YouTube trusts a TV client context only on
+  // the host a real TV client uses. The desktop hits www.youtube.com for those
+  // profiles (Electron opens CORS), so the proxy must keep them apart instead
+  // of flattening every youtubei call onto music.youtube.com.
   if (
     hostMatches(host, "youtube.com") &&
     (url.pathname.startsWith("/youtubei/") || url.pathname === "/youtubei")
   ) {
-    return `/api/yt${url.pathname.slice("/youtubei".length)}${url.search}`;
+    const rest = `${url.pathname.slice("/youtubei".length)}${url.search}`;
+    return host === "www.youtube.com" ? `/api/yt/www${rest}` : `/api/yt${rest}`;
   }
 
   // SoundCloud API: api-v2.soundcloud.com/<...> -> /api/sc/<...>

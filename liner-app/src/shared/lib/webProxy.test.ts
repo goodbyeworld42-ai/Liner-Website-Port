@@ -48,6 +48,23 @@ describe("rewriteForWeb — Liner API method awareness", () => {
     expect(rewriteForWeb(mirror, "POST")).toBe(mirror);
   });
 
+  it("keeps the playback-profile youtubei origin apart from WEB_REMIX", () => {
+    // TV / visionOS / Android VR player requests must land on www.youtube.com
+    // — the account-authorized TV player request is only trusted there
+    expect(
+      rewriteForWeb("https://www.youtube.com/youtubei/v1/player?prettyPrint=false", "POST"),
+    ).toBe("/api/yt/www/v1/player?prettyPrint=false");
+    // WEB_REMIX catalog calls keep the music origin
+    expect(
+      rewriteForWeb("https://music.youtube.com/youtubei/v1/player?prettyPrint=false", "POST"),
+    ).toBe("/api/yt/v1/player?prettyPrint=false");
+    // nested youtube.com subdomains that are NOT www stay on the music proxy
+    // (only an exact www host is the playback origin)
+    expect(
+      rewriteForWeb("https://youtube.com/youtubei/v1/player", "POST"),
+    ).toBe("/api/yt/v1/player");
+  });
+
   it("leaves other hosts' behavior unchanged", () => {
     expect(
       rewriteForWeb("https://music.youtube.com/youtubei/v1/search?key=x", "POST"),
