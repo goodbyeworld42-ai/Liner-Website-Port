@@ -89,8 +89,17 @@ if [ -f "./next-service-dist/server.js" ]; then
         echo "🗄️  当前使用外部指定数据库: $DATABASE_URL"
     fi
     
-    # 后台启动 Next.js
-    bun server.js &
+    # Prefer Node for the standalone server: Next.js standalone is generated
+    # for Node, and the project instrumentation registers an undici dispatcher
+    # (raised response-header cap for YouTube TV sign-in) that only loads under
+    # Node. Bun still works (its fetch has no 16KB header cap), so fall back.
+    if command -v node >/dev/null 2>&1; then
+        echo "▶️  使用 Node 运行 standalone server ($(node --version))"
+        node server.js &
+    else
+        echo "▶️  Node 不可用，使用 Bun 运行 standalone server"
+        bun server.js &
+    fi
     NEXT_PID=$!
     pids="$NEXT_PID"
     

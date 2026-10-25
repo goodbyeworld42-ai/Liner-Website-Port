@@ -10,9 +10,24 @@
 //
 // npm-undici's setGlobalDispatcher registers through Symbol.for, which the
 // Node built-in global fetch used by the proxy routes also honours.
+//
+// IMPORTANT: the production deployment (Alibaba FC) runs the standalone
+// server via `bun server.js`, and npm-undici cannot load under Bun
+// (webidl.util.markAsUncloneable is Node-only). A throwing instrumentation
+// hook used to leave the server half-initialised: every /api/* route answered
+// 500 "Internal Server Error" while static files kept serving. Bun's own
+// fetch implementation has no 16 KB undici header cap, so skipping the
+// dispatcher there is safe — the raised cap is a Node-only concern.
 export async function register() {
   if (process.env.NEXT_RUNTIME === "nodejs") {
-    const { setGlobalDispatcher, Agent } = await import("undici");
-    setGlobalDispatcher(new Agent({ maxHeaderSize: 256 * 1024 }));
+    try {
+      const { setGlobalDispatcher, Agent } = await import("undici");
+      setGlobalDispatcher(new Agent({ maxHeaderSize: 256 * 1024 }));
+    } catch (error) {
+      console.warn(
+        "[liner] undici dispatcher unavailable in this runtime; using the built-in fetch as-is:",
+        error instanceof Error ? error.message : error,
+      );
+    }
   }
 }
