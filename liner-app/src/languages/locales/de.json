@@ -444,7 +444,8 @@
       "interface": "Oberfläche",
       "integrations": "Integrationen",
       "application": "Anwendung",
-      "help": "Hilfe"
+      "help": "Hilfe",
+      "account": "Konto"
     },
     "docs": "Dokumentation",
     "support": "Support",
@@ -627,6 +628,7 @@
     },
     "profile": {
       "title": "Profil",
+      "description": "Aktualisiere dein öffentliches Profil, deinen Avatar und deine Privatsphäre-Einstellungen.",
       "signed_in_as": "Angemeldet als",
       "not_signed_in": "Du bist derzeit nicht angemeldet.",
       "sign_in": "Bei Liner anmelden",
@@ -649,6 +651,13 @@
       "display_name_placeholder": "Dein Name oder Alias",
       "avatar_url_label": "Avatar-URL",
       "avatar_url_placeholder": "https://example.com/avatar.jpg",
+      "avatar_change": "Foto hochladen",
+      "avatar_remove": "Foto entfernen",
+      "avatar_updated": "Profilfoto aktualisiert",
+      "avatar_removed": "Profilfoto entfernt",
+      "avatar_invalid": "Bitte wähle ein PNG-, JPEG-, WebP- oder GIF-Bild.",
+      "avatar_too_large": "Das Bild ist zu groß. Bitte wähle eines unter 10 MB.",
+      "avatar_failed": "Dieses Bild konnte nicht verarbeitet werden. Versuche ein anderes.",
       "bio_label": "Biografie",
       "bio_placeholder": "Erzähl der Welt von deinem Musikgeschmack…",
       "save_changes": "Änderungen speichern",
@@ -679,7 +688,11 @@
         "description": "Erscheine in den Bestenlisten der Top-Hörer für Künstler und in globalen Rankings."
       },
       "badge_public": "Öffentlich",
-      "badge_private": "Privat"
+      "badge_private": "Privat",
+      "security_section": "Sicherheit",
+      "change_password": "Passwort ändern",
+      "password_note": "Liner-Konten werden vom Liner-Dienst verwaltet, der derzeit keine Passwortänderung in der App anbietet. Wende dich an den Support, wenn du dein Passwort ändern möchtest.",
+      "contact_support": "Support kontaktieren"
     },
     "about": {
       "liner": "Liner",

@@ -447,7 +447,8 @@
       "interface": "Interface",
       "integrations": "Mga Integration",
       "application": "Application",
-      "help": "Tulong"
+      "help": "Tulong",
+      "account": "Account"
     },
     "docs": "Docs",
     "support": "Suporta",
@@ -762,6 +763,7 @@
     },
     "profile": {
       "title": "Profile",
+      "description": "I-update ang iyong pampublikong profile, avatar, at mga preference sa privacy.",
       "signed_in_as": "Naka-sign in bilang",
       "not_signed_in": "Kasalukuyang hindi naka-sign in sa kilalang session.",
       "sign_in": "Mag-sign in sa Liner",
@@ -784,6 +786,13 @@
       "display_name_placeholder": "Pangalan mo o alias",
       "avatar_url_label": "Avatar URL",
       "avatar_url_placeholder": "https://halimbawa.com/avatar.jpg",
+      "avatar_change": "Mag-upload ng photo",
+      "avatar_remove": "Alisin ang photo",
+      "avatar_updated": "Na-update ang profile photo",
+      "avatar_removed": "Natanggal ang profile photo",
+      "avatar_invalid": "Pumili ng PNG, JPEG, WebP o GIF na imahe.",
+      "avatar_too_large": "Masyadong malaki ang imahe. Pumili ng mas maliit sa 10 MB.",
+      "avatar_failed": "Hindi ma-process ang imaheng ito. Subukan ang iba.",
       "bio_label": "Bio",
       "bio_placeholder": "Sabihin sa mundo ang music taste mo...",
       "save_changes": "I-save ang mga Pagbabago",
@@ -814,7 +823,11 @@
         "description": "Lumabas sa mga leaderboard ng pinakamaraming kinikinig para sa mga artist at pandaigdigang ranggo."
       },
       "badge_public": "Publiko",
-      "badge_private": "Pribado"
+      "badge_private": "Pribado",
+      "security_section": "Seguridad",
+      "change_password": "Palitan ang password",
+      "password_note": "Ang mga Liner account ay pinangangasiwaan ng Liner service, na hindi pa offer ang pagpalit ng password sa app. Makipag-ugnayan sa support kung kailangan mong palitan ito.",
+      "contact_support": "Makipag-ugnayan sa support"
     },
     "about": {
       "liner": "Liner",

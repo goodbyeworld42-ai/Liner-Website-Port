@@ -442,7 +442,8 @@
       "interface": "Інтерфейс",
       "integrations": "Інтеграції",
       "application": "Додаток",
-      "help": "Допомога"
+      "help": "Допомога",
+      "account": "Акаунт"
     },
     "docs": "Документація",
     "support": "Підтримка",
@@ -790,6 +791,7 @@
     },
     "profile": {
       "title": "Профіль",
+      "description": "Оновіть публічний профіль, аватар і налаштування приватності.",
       "signed_in_as": "Ви увійшли як",
       "not_signed_in": "Зараз немає активної сесії.",
       "sign_in": "Увійти в Liner",
@@ -812,6 +814,13 @@
       "display_name_placeholder": "Ваше ім'я або нікнейм",
       "avatar_url_label": "Посилання на аватар",
       "avatar_url_placeholder": "https://example.com/avatar.jpg",
+      "avatar_change": "Завантажити фото",
+      "avatar_remove": "Видалити фото",
+      "avatar_updated": "Фото профілю оновлено",
+      "avatar_removed": "Фото профілю видалено",
+      "avatar_invalid": "Виберіть зображення PNG, JPEG, WebP або GIF.",
+      "avatar_too_large": "Зображення задоступно велике. Виберіть файл до 10 МБ.",
+      "avatar_failed": "Не вдалося обробити це зображення. Спробуйте інше.",
       "bio_label": "Про себе",
       "bio_placeholder": "Розкажіть трохи про ваші музичні смаки...",
       "save_changes": "Зберегти зміни",
@@ -842,7 +851,11 @@
         "description": "Брати участь у рейтингах найкращих слухачів артистів та загальних топах."
       },
       "badge_public": "Публічний",
-      "badge_private": "Приватний"
+      "badge_private": "Приватний",
+      "security_section": "Безпека",
+      "change_password": "Зміна пароля",
+      "password_note": "Обліковими записами Liner керує сервіс Liner, який поки не підтримує зміну пароля в застосунку. Якщо потрібно змінити пароль, зверніться до підтримки.",
+      "contact_support": "Звернутися до підтримки"
     },
     "about": {
       "liner": "Liner",

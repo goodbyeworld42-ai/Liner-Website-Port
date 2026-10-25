@@ -443,7 +443,8 @@
       "interface": "Interfejs",
       "integrations": "Integracje",
       "application": "Aplikacja",
-      "help": "Pomoc"
+      "help": "Pomoc",
+      "account": "Konto"
     },
     "docs": "Dokumentacja",
     "support": "Pomoc techniczna",
@@ -686,6 +687,7 @@
     },
     "profile": {
       "title": "Profil",
+      "description": "Zaktualizuj profil publiczny, avatar i preferencje prywatności.",
       "signed_in_as": "Zalogowano jako",
       "not_signed_in": "Nie jesteś zalogowany w rozpoznanej sesji.",
       "sign_in": "Zaloguj się do Liner",
@@ -708,6 +710,13 @@
       "display_name_placeholder": "Twoje imię lub pseudonim",
       "avatar_url_label": "URL awatara",
       "avatar_url_placeholder": "https://example.com/avatar.jpg",
+      "avatar_change": "Prześlij zdjęcie",
+      "avatar_remove": "Usuń zdjęcie",
+      "avatar_updated": "Zdjęcie profilowe zaktualizowane",
+      "avatar_removed": "Zdjęcie profilowe usunięte",
+      "avatar_invalid": "Wybierz obraz PNG, JPEG, WebP lub GIF.",
+      "avatar_too_large": "Obraz jest za duży. Wybierz plik poniżej 10 MB.",
+      "avatar_failed": "Nie udało się przetworzyć tego obrazu. Spróbuj innego.",
       "bio_label": "Opis",
       "bio_placeholder": "Opowiedz światu o swoim guście muzycznym...",
       "save_changes": "Zapisz zmiany",
@@ -738,7 +747,11 @@
         "description": "Pojawiaj się w rankingach najaktywniejszych słuchaczy wykonawców i w rankingach globalnych."
       },
       "badge_public": "Publiczny",
-      "badge_private": "Prywatny"
+      "badge_private": "Prywatny",
+      "security_section": "Bezpieczeństwo",
+      "change_password": "Zmień hasło",
+      "password_note": "Kontami Liner zarządza serwis Liner, który nie obsługuje jeszcze zmiany hasła w aplikacji. Skontaktuj się z pomocą techniczną, jeśli chcesz je zmienić.",
+      "contact_support": "Skontaktuj się z pomocą"
     },
     "about": {
       "liner": "Liner",

@@ -447,7 +447,8 @@
       "interface": "Interface",
       "integrations": "Integrations",
       "application": "Application",
-      "help": "Help"
+      "help": "Help",
+      "account": "Account"
     },
     "docs": "Docs",
     "support": "Support",
@@ -762,6 +763,7 @@
     },
     "profile": {
       "title": "Profile",
+      "description": "Update your public profile, avatar and privacy preferences.",
       "signed_in_as": "Signed in as",
       "not_signed_in": "Not currently signed in to a recognized session.",
       "sign_in": "Sign in to Liner",
@@ -784,6 +786,13 @@
       "display_name_placeholder": "Your name or alias",
       "avatar_url_label": "Avatar URL",
       "avatar_url_placeholder": "https://example.com/avatar.jpg",
+      "avatar_change": "Upload photo",
+      "avatar_remove": "Remove photo",
+      "avatar_updated": "Profile photo updated",
+      "avatar_removed": "Profile photo removed",
+      "avatar_invalid": "Please choose a PNG, JPEG, WebP or GIF image.",
+      "avatar_too_large": "That image is too large. Please choose one under 10 MB.",
+      "avatar_failed": "Couldn't process this image. Please try another one.",
       "bio_label": "Bio",
       "bio_placeholder": "Tell the world about your music taste...",
       "save_changes": "Save Changes",
@@ -814,7 +823,11 @@
         "description": "Appear in top listener leaderboards for artists and global rankings."
       },
       "badge_public": "Public",
-      "badge_private": "Private"
+      "badge_private": "Private",
+      "security_section": "Security",
+      "change_password": "Change password",
+      "password_note": "Liner accounts are managed by the Liner service, which doesn't offer in-app password changes yet. Contact support if you need to change yours.",
+      "contact_support": "Contact support"
     },
     "about": {
       "liner": "Liner",

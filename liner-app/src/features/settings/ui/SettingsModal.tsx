@@ -7,6 +7,7 @@ import {
   ExitLine,
   DiscordFill,
   KeyboardLine,
+  User3Line,
   YoutubeFill,
 } from "@mingcute/react";
 import {
@@ -36,9 +37,11 @@ import {
   OverlayTab,
   DiscordTab,
   YoutubeTab,
+  AccountTab,
 } from "./tabs";
 
 type TabId =
+  | "Account"
   | "Playback"
   | "Shortcuts"
   | "Overlay"
@@ -53,6 +56,7 @@ const navGroupClass =
   "flex flex-col gap-[1px] rounded-[14px] bg-bg-surface/70 p-[4px] dark:bg-white/[0.06]";
 
 const TAB_ICONS: Record<TabId, React.ComponentType<any>> = {
+  Account: User3Line,
   Playback: Play,
   Shortcuts: KeyboardLine,
   Overlay: Widget5,
@@ -64,9 +68,10 @@ const TAB_ICONS: Record<TabId, React.ComponentType<any>> = {
   About: InfoCircle,
 };
 
-type TabGroupKey = "player" | "interface" | "integrations" | "application";
+type TabGroupKey = "account" | "player" | "interface" | "integrations" | "application";
 
 const TAB_GROUPS: { labelKey: TabGroupKey; ids: TabId[] }[] = [
+  { labelKey: "account", ids: ["Account"] },
   { labelKey: "player", ids: ["Playback", "Shortcuts"] },
   { labelKey: "interface", ids: ["Appearance", "Customization", "Overlay"] },
   { labelKey: "integrations", ids: ["Youtube", "Discord"] },
@@ -74,6 +79,63 @@ const TAB_GROUPS: { labelKey: TabGroupKey; ids: TabId[] }[] = [
 ];
 
 const SETTING_ITEMS: { tabId: TabId; titleKey: string; descKey?: string }[] = [
+  // Account
+  {
+    tabId: "Account",
+    titleKey: "settings.profile.details_section",
+    descKey: "settings.profile.details_subtitle",
+  },
+  {
+    tabId: "Account",
+    titleKey: "settings.profile.display_name_label",
+    descKey: "settings.profile.display_name_placeholder",
+  },
+  {
+    tabId: "Account",
+    titleKey: "settings.profile.username_label",
+    descKey: "settings.profile.username_hint",
+  },
+  {
+    tabId: "Account",
+    titleKey: "settings.profile.bio_label",
+    descKey: "settings.profile.bio_placeholder",
+  },
+  {
+    tabId: "Account",
+    titleKey: "settings.profile.avatar_change",
+    descKey: "settings.profile.avatar_remove",
+  },
+  {
+    tabId: "Account",
+    titleKey: "settings.profile.public_profile.title",
+    descKey: "settings.profile.public_profile.description",
+  },
+  {
+    tabId: "Account",
+    titleKey: "settings.profile.show_activity.title",
+    descKey: "settings.profile.show_activity.description",
+  },
+  {
+    tabId: "Account",
+    titleKey: "settings.profile.show_history.title",
+    descKey: "settings.profile.show_history.description",
+  },
+  {
+    tabId: "Account",
+    titleKey: "settings.profile.show_liked_tracks.title",
+    descKey: "settings.profile.show_liked_tracks.description",
+  },
+  {
+    tabId: "Account",
+    titleKey: "settings.profile.participate_leaderboards.title",
+    descKey: "settings.profile.participate_leaderboards.description",
+  },
+  {
+    tabId: "Account",
+    titleKey: "settings.profile.change_password",
+    descKey: "settings.profile.password_note",
+  },
+
   // Playback
   {
     tabId: "Playback",
@@ -278,7 +340,7 @@ export default function SettingsModal() {
   const open = useModalStore((state) => state.settingsOpen);
   const close = useModalStore((state) => state.closeSettings);
 
-  const [activeTab, setActiveTab] = useState<TabId>("Playback");
+  const [activeTab, setActiveTab] = useState<TabId>("Account");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
   const {
@@ -294,6 +356,7 @@ export default function SettingsModal() {
   };
 
   const tabLabels: Record<TabId, string> = {
+    Account: t("settings.tabs.account") || "Account",
     Playback: t("settings.tabs.playback"),
     Shortcuts: t("settings.tabs.shortcuts") || "Shortcuts",
     Overlay: t("settings.tabs.overlay") || "Overlay",
@@ -306,6 +369,9 @@ export default function SettingsModal() {
   };
 
   const tabDescriptions: Record<TabId, string> = {
+    Account:
+      t("settings.profile.description") ||
+      "Update your public profile, avatar and privacy preferences.",
     Playback: t("settings.playback.description"),
     Shortcuts:
       t("settings.shortcuts.description") ||
@@ -333,6 +399,7 @@ export default function SettingsModal() {
     const set = new Set<TabId>();
 
     const TAB_LABEL_KEYS: Record<TabId, string> = {
+      Account: "settings.tabs.account",
       Playback: "settings.tabs.playback",
       Shortcuts: "settings.tabs.shortcuts",
       Overlay: "settings.tabs.overlay",
@@ -345,6 +412,7 @@ export default function SettingsModal() {
     };
 
     const TAB_DESC_KEYS: Record<TabId, string> = {
+      Account: "settings.profile.description",
       Playback: "settings.playback.description",
       Shortcuts: "settings.shortcuts.description",
       Overlay: "settings.overlay.description",
@@ -579,12 +647,15 @@ export default function SettingsModal() {
               />
             </span>
             <span className="flex-1 min-w-0 flex flex-col leading-tight">
-              <span
-                className="text-text-primary text-[13px] font-[500] truncate"
+              <button
+                type="button"
+                onClick={() => setActiveTab("Account")}
+                title={t("settings.profile.edit_profile") || "Edit profile"}
+                className="text-text-primary text-[13px] font-[500] truncate text-left border-0 bg-transparent p-0 cursor-pointer hover:underline"
                 style={font}
               >
                 {displayName}
-              </span>
+              </button>
               <span
                 className="text-text-tertiary text-[12px] truncate"
                 style={font}
@@ -641,6 +712,9 @@ export default function SettingsModal() {
               transition={{ duration: 0.12, ease: "easeOut" }}
               className="flex-1 flex flex-col"
             >
+              {activeTab === "Account" && (
+                <AccountTab searchQuery={searchQuery} />
+              )}
               {activeTab === "Playback" && (
                 <PlaybackTab searchQuery={searchQuery} />
               )}

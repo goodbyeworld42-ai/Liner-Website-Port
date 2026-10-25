@@ -24,6 +24,12 @@ export const FETCH_HOSTS = [
   "images.genius.com",
   "api.github.com",
   "github.com",
+  // Liner API mutations (PATCH/PUT/DELETE): the upstream CORS policy only
+  // lists GET, HEAD, POST in access-control-allow-methods, so the browser
+  // blocks those methods when called cross-origin. They arrive here via the
+  // method-aware rewrite in liner-app/src/shared/lib/webProxy.ts.
+  "api.tryliner.fun",
+  "api.tryliner.com",
 ];
 
 // binary media upstreams (Range-capable audio streams)

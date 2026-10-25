@@ -8,8 +8,12 @@
 //   /api/fetch?u=...   -> generic JSON/text/form upstreams (oauth, imports, discovery)
 //   /api/media?u=...   -> binary audio streams with Range support (googlevideo, sndcdn, ...)
 //
-// Everything else (the Liner API itself) is CORS-enabled upstream and is
-// called directly, exactly like the desktop renderer does.
+// The Liner API itself is CORS-enabled upstream for GET/HEAD/POST (the hot
+// path: feeds, search, library sync, login/register all stay direct). Its
+// CORS policy does NOT list PATCH/PUT/DELETE in access-control-allow-methods,
+// though — the desktop app never noticed because Electron opens CORS on every
+// response, but a plain browser preflight-rejects those mutations. They are
+// transparently rerouted through /api/fetch (see rewriteForWeb).
 
 const SAME_ORIGIN_BYPASS = ["blob:", "data:", "about:", "chrome:", "resource:"];
 
@@ -55,6 +59,10 @@ function hostMatches(host: string, suffix: string): boolean {
   return host === suffix || host.endsWith("." + suffix);
 }
 
+// methods the Liner API's CORS policy does not allow cross-origin:
+// preflight returns access-control-allow-methods: GET,HEAD,POST only
+const LINER_API_CORS_BLOCKED_METHODS = new Set(["PATCH", "PUT", "DELETE"]);
+
 export function isWebProxyActive(): boolean {
   return typeof window !== "undefined";
 }
@@ -62,8 +70,9 @@ export function isWebProxyActive(): boolean {
 /**
  * Rewrites a cross-origin URL to its same-origin proxy equivalent.
  * Passes through anything already relative, blob/data or same-origin.
+ * `method` decides whether Liner API mutations go through /api/fetch.
  */
-export function rewriteForWeb(rawUrl: string): string {
+export function rewriteForWeb(rawUrl: string, method?: string): string {
   if (!rawUrl) return rawUrl;
   if (SAME_ORIGIN_BYPASS.some((scheme) => rawUrl.startsWith(scheme))) return rawUrl;
   if (rawUrl.startsWith("/")) return rawUrl;
@@ -79,9 +88,14 @@ export function rewriteForWeb(rawUrl: string): string {
 
   const host = url.hostname;
 
-  // the Liner API itself is CORS-enabled upstream — always call it directly
-  // (matches DEFAULT_PRIMARY_API; anything on api.<base> must not be proxied)
+  // the Liner API: GET/HEAD/POST are CORS-allowed upstream and stay direct
+  // (matches DEFAULT_PRIMARY_API; anything on api.<base> must not be proxied).
+  // PATCH/PUT/DELETE are not in the upstream allow-methods — send them through
+  // the same-origin generic proxy instead.
   if (host === "api.tryliner.fun" || host === "api.tryliner.com") {
+    if (method && LINER_API_CORS_BLOCKED_METHODS.has(method.toUpperCase())) {
+      return `/api/fetch?u=${encodeURIComponent(url.toString())}`;
+    }
     return rawUrl;
   }
 
@@ -132,12 +146,12 @@ export function installWebFetchProxy(): void {
   window.fetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
     if (typeof input === "string" || input instanceof URL) {
       const raw = input.toString();
-      const rewritten = rewriteForWeb(raw);
+      const rewritten = rewriteForWeb(raw, init?.method);
       if (rewritten === raw) return originalFetch(input as RequestInfo, init);
       return originalFetch(rewritten, init);
     }
 
-    const rewritten = rewriteForWeb(input.url);
+    const rewritten = rewriteForWeb(input.url, input.method);
     if (rewritten === input.url) return originalFetch(input, init);
 
     const request = new Request(rewritten, input);

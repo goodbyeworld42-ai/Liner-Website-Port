@@ -441,7 +441,8 @@
       "interface": "Interface",
       "integrations": "Intégrations",
       "application": "Application",
-      "help": "Aide"
+      "help": "Aide",
+      "account": "Compte"
     },
     "docs": "Documentation",
     "support": "Assistance",
@@ -684,6 +685,7 @@
     },
     "profile": {
       "title": "Profil",
+      "description": "Mettez à jour votre profil public, votre avatar et vos préférences de confidentialité.",
       "signed_in_as": "Connecté en tant que",
       "not_signed_in": "Aucune session reconnue n'est actuellement connectée.",
       "sign_in": "Se connecter à Liner",
@@ -706,6 +708,13 @@
       "display_name_placeholder": "Votre nom ou pseudonyme",
       "avatar_url_label": "URL de l'avatar",
       "avatar_url_placeholder": "https://example.com/avatar.jpg",
+      "avatar_change": "Importer une photo",
+      "avatar_remove": "Supprimer la photo",
+      "avatar_updated": "Photo de profil mise à jour",
+      "avatar_removed": "Photo de profil supprimée",
+      "avatar_invalid": "Choisissez une image PNG, JPEG, WebP ou GIF.",
+      "avatar_too_large": "Cette image est trop grande. Choisissez-en une de moins de 10 Mo.",
+      "avatar_failed": "Impossible de traiter cette image. Essayez-en une autre.",
       "bio_label": "Bio",
       "bio_placeholder": "Parlez de vos goûts musicaux...",
       "save_changes": "Enregistrer",
@@ -736,7 +745,11 @@
         "description": "Apparaissez dans les classements des meilleurs auditeurs d'artistes et dans les classements mondiaux."
       },
       "badge_public": "Public",
-      "badge_private": "Privé"
+      "badge_private": "Privé",
+      "security_section": "Sécurité",
+      "change_password": "Changer le mot de passe",
+      "password_note": "Les comptes Liner sont gérés par le service Liner, qui ne propose pas encore de changement de mot de passe dans l'application. Contactez le support si vous devez changer le vôtre.",
+      "contact_support": "Contacter le support"
     },
     "about": {
       "liner": "Liner",

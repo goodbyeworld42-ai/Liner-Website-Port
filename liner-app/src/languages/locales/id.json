@@ -447,7 +447,8 @@
       "interface": "Antarmuka",
       "integrations": "Integrasi",
       "application": "Aplikasi",
-      "help": "Bantuan"
+      "help": "Bantuan",
+      "account": "Akun"
     },
     "docs": "Dokumen",
     "support": "Dukungan",
@@ -762,6 +763,7 @@
     },
     "profile": {
       "title": "Profil",
+      "description": "Perbarui profil publik, avatar, dan preferensi privasi Anda.",
       "signed_in_as": "Masuk sebagai",
       "not_signed_in": "Saat ini tidak masuk ke sesi yang dikenali.",
       "sign_in": "Masuk ke Liner",
@@ -784,6 +786,13 @@
       "display_name_placeholder": "Namamu atau alias",
       "avatar_url_label": "URL Avatar",
       "avatar_url_placeholder": "https://contoh.com/avatar.jpg",
+      "avatar_change": "Unggah foto",
+      "avatar_remove": "Hapus foto",
+      "avatar_updated": "Foto profil diperbarui",
+      "avatar_removed": "Foto profil dihapus",
+      "avatar_invalid": "Pilih gambar PNG, JPEG, WebP, atau GIF.",
+      "avatar_too_large": "Gambar terlalu besar. Pilih yang di bawah 10 MB.",
+      "avatar_failed": "Tidak dapat memproses gambar ini. Coba gambar lain.",
       "bio_label": "Bio",
       "bio_placeholder": "Ceritakan selera musikmu pada dunia...",
       "save_changes": "Simpan Perubahan",
@@ -814,7 +823,11 @@
         "description": "Muncul di papan peringkat pendengar teratas untuk artis dan peringkat global."
       },
       "badge_public": "Publik",
-      "badge_private": "Pribadi"
+      "badge_private": "Pribadi",
+      "security_section": "Keamanan",
+      "change_password": "Ubah kata sandi",
+      "password_note": "Akun Liner dikelola oleh layanan Liner, yang belum menyediakan perubahan kata sandi di dalam aplikasi. Hubungi dukungan jika Anda perlu mengubahnya.",
+      "contact_support": "Hubungi dukungan"
     },
     "about": {
       "liner": "Liner",
