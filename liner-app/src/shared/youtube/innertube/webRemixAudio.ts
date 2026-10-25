@@ -68,13 +68,31 @@ export async function getWebPlayer(): Promise<WebPlayer> {
 }
 
 async function mintContentPoToken(videoId: string): Promise<string> {
+  // desktop: the native signer mints in a hidden Electron window.
+  // website port: the shell mints server-side (BotGuard in a jsdom realm —
+  // see src/app/api/po-token/route.ts) and hands the token back here.
   const mint =
     typeof window === "undefined"
       ? undefined
       : window.linerElectron?.mintPoToken;
-  if (!mint)
-    throw new InnertubeError("PO tokens need a newer Liner app version.", 501);
-  return mint(videoId);
+  if (mint) return mint(videoId);
+  const response = await fetch(
+    `/api/po-token?videoId=${encodeURIComponent(videoId)}`,
+    { signal: AbortSignal.timeout(20_000) },
+  );
+  if (!response.ok) {
+    const body = (await response.json().catch(() => null)) as {
+      error?: string;
+    } | null;
+    throw new InnertubeError(
+      body?.error || `PO token request failed (${response.status})`,
+      502,
+    );
+  }
+  const body = (await response.json()) as { poToken?: string };
+  if (!body.poToken)
+    throw new InnertubeError("PO token minting returned an empty token", 502);
+  return body.poToken;
 }
 
 function throwIfAborted(signal?: AbortSignal): void {

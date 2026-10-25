@@ -1,0 +1,120 @@
+// Experiment v3: which innertube clients still allow anonymous playback
+// from this (datacenter) IP, with and without a PO token?
+import { createRequire } from "module";
+const require2 = createRequire("/home/z/my-project/liner-app/package.json");
+const youtubei = require2("youtubei.js");
+const { Innertube, ClientType } = youtubei;
+import { JSDOM } from "jsdom";
+import { BotGuardClient } from "bgutils-js/botguard";
+import { WebPoMinter } from "bgutils-js/webpo";
+import { buildURL, GOOG_API_KEY } from "bgutils-js/utils";
+
+const REQUEST_KEY = "O43z0dpjhgX20SCx4KAo";
+const VIDEO = "pWWJ91byADE";
+
+async function mintToken(binding) {
+  const att = await fetch(
+    "https://www.youtube.com/youtubei/v1/att/get?prettyPrint=false",
+    {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        context: {
+          client: {
+            clientName: "WEB",
+            clientVersion: "2.20250925.01.00",
+            hl: "en",
+            gl: "US",
+          },
+        },
+        engagementType: "ENGAGEMENT_TYPE_UNBOUND",
+      }),
+    },
+  );
+  const challenge = (await att.json()).bgChallenge;
+  const iu =
+    challenge.interpreterUrl
+      .privateDoNotAccessOrElseTrustedResourceUrlWrappedValue;
+  const script = await (await fetch(`https:${iu}`)).text();
+  const dom = new JSDOM("<!doctype html><html><body></body></html>", {
+    url: "https://www.youtube.com/",
+    userAgent:
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    pretendToBeVisual: true,
+    runScripts: "outside-only",
+  });
+  dom.window.eval(script);
+  const botguard = await BotGuardClient.create({
+    program: challenge.program,
+    globalName: challenge.globalName,
+    globalObject: dom.window,
+  });
+  const signals = [];
+  const response = await botguard.snapshot({ webPoSignalOutput: signals });
+  const gen = await fetch(buildURL("GenerateIT", true), {
+    method: "POST",
+    headers: {
+      "content-type": "application/json+protobuf",
+      "x-goog-api-key": GOOG_API_KEY,
+      "x-user-agent": "grpc-web-javascript/0.1",
+    },
+    body: JSON.stringify([REQUEST_KEY, response]),
+  });
+  const [token] = await gen.json();
+  if (!token) throw new Error("no integrity token");
+  const vmGetMinter = signals[0];
+  signals[0] = async (bytes) => {
+    const fn = await vmGetMinter(bytes);
+    return async (data) => {
+      const r = await fn(data);
+      return r instanceof Uint8Array ? r : new Uint8Array(r);
+    };
+  };
+  const minter = await WebPoMinter.create(
+    { integrityToken: String(token).replace(/\+/g, "-").replace(/\//g, "_") },
+    signals,
+  );
+  const po = await minter.mintAsWebsafeString(binding);
+  dom.window.close();
+  return po;
+}
+
+const token = await mintToken(VIDEO);
+console.log("token ready:", token.slice(0, 20) + "...");
+
+const CLIENTS = [
+  "YTMUSIC",
+  "ANDROID_VR",
+  "TVHTML5_SIMPLY_EMBEDDED_PLAYER",
+  "WEB_EMBEDDED_PLAYER",
+  "MWEB",
+  "TV",
+  "IOS",
+  "ANDROID",
+];
+
+for (const client of CLIENTS) {
+  for (const withToken of [false, true]) {
+    if (withToken && !["YTMUSIC", "WEB", "MWEB"].includes(client)) continue;
+    try {
+      const innertube = await Innertube.create({
+        client_type: client,
+        generate_session_locally: true,
+      });
+      const info = await innertube.getBasicInfo(VIDEO, {
+        client,
+        ...(withToken ? { po_token: token } : {}),
+      });
+      const formats = (info.streaming_data?.adaptive_formats ?? []).filter(
+        (f) => f.has_audio && !f.has_video,
+      );
+      console.log(
+        `${client}${withToken ? "+po" : "    "}: ${info.playability_status?.status} | formats: ${formats.length} | ${(info.playability_status?.reason || "").slice(0, 45)}`,
+      );
+    } catch (e) {
+      console.log(
+        `${client}${withToken ? "+po" : "    "}: ERROR ${String(e.message).slice(0, 60)}`,
+      );
+    }
+  }
+}
