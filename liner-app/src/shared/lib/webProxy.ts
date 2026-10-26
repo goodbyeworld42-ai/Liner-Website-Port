@@ -4,6 +4,9 @@
 // same-origin proxy routes served by the web shell:
 //
 //   /api/yt/...        -> https://music.youtube.com/youtubei/...
+//   /api/yt/www/...    -> https://www.youtube.com/youtubei/... (TV profiles)
+//   /api/yt/sabr?u=... -> SABR UMP streaming POSTs (/api/manifest/... on
+//                         youtube.com / googlevideo.com), streamed 1:1
 //   /api/sc/...        -> https://api-v2.soundcloud.com/...
 //   /api/fetch?u=...   -> generic JSON/text/form upstreams (oauth, imports, discovery)
 //   /api/media?u=...   -> binary audio streams with Range support (googlevideo, sndcdn, ...)
@@ -113,6 +116,19 @@ export function rewriteForWeb(rawUrl: string, method?: string): string {
   ) {
     const rest = `${url.pathname.slice("/youtubei".length)}${url.search}`;
     return host === "www.youtube.com" ? `/api/yt/www${rest}` : `/api/yt${rest}`;
+  }
+
+  // SABR UMP streaming: serverAbrStreamingUrl (/api/manifest/...) on
+  // youtube.com or any googlevideo fallback host. These are long-lived binary
+  // protobuf POST streams that deliver media chunks progressively — the
+  // generic /api/fetch proxy buffers the whole body and 30s-times-out (the
+  // SabrStream client watchdog aborts long before the buffered body arrives)
+  // and /api/media is GET/HEAD-only. Dedicated streaming proxy: /api/yt/sabr.
+  if (
+    (hostMatches(host, "youtube.com") || hostMatches(host, "googlevideo.com")) &&
+    (url.pathname === "/api/manifest" || url.pathname.startsWith("/api/manifest/"))
+  ) {
+    return `/api/yt/sabr?u=${encodeURIComponent(url.toString())}`;
   }
 
   // SoundCloud API: api-v2.soundcloud.com/<...> -> /api/sc/<...>

@@ -65,6 +65,26 @@ describe("rewriteForWeb — Liner API method awareness", () => {
     ).toBe("/api/yt/v1/player");
   });
 
+  it("routes SABR UMP streaming URLs to the dedicated streaming proxy", () => {
+    // serverAbrStreamingUrl from the TV player response
+    const sabr = "https://www.youtube.com/api/manifest/sabr/vid?expire=1&n=abc";
+    expect(rewriteForWeb(sabr, "POST")).toBe(`/api/yt/sabr?u=${encodeURIComponent(sabr)}`);
+    // SabrStream fallback hosts rotate onto googlevideo r-nodes, same path
+    const fallback = "https://r5---sn-1234.googlevideo.com/api/manifest/sabr/vid?rn=2";
+    expect(rewriteForWeb(fallback, "POST")).toBe(
+      `/api/yt/sabr?u=${encodeURIComponent(fallback)}`,
+    );
+    // non-manifest paths keep their existing routing
+    expect(
+      rewriteForWeb("https://www.youtube.com/youtubei/v1/player?prettyPrint=false", "POST"),
+    ).toBe("/api/yt/www/v1/player?prettyPrint=false");
+    expect(
+      rewriteForWeb("https://r5---sn-1234.googlevideo.com/videoplayback?id=x", "GET"),
+    ).toBe(
+      `/api/media?u=${encodeURIComponent("https://r5---sn-1234.googlevideo.com/videoplayback?id=x")}`,
+    );
+  });
+
   it("leaves other hosts' behavior unchanged", () => {
     expect(
       rewriteForWeb("https://music.youtube.com/youtubei/v1/search?key=x", "POST"),

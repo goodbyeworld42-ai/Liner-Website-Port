@@ -271,3 +271,23 @@ Stage Summary:
 - The account-authorized YouTube playback chain now reaches the same host the desktop uses — this is the fix candidate for the user's "imported playlist songs not loading/unavailable" when signed in; user must hard-refresh and verify with their session (sandbox has no YouTube session to reproduce signed-in playback end-to-end)
 - Cached/mainstream tracks keep playing regardless; anonymous fallback paths remain IP-reputation-dependent (YouTube-side, flapping, unchanged)
 - Artifacts: liner-app/src/shared/lib/webProxy.ts (+ test), src/lib/innertube-proxy.ts, src/app/api/yt/[...path]/route.ts, src/app/api/yt/www/[...path]/route.ts, src/lib/liner-proxy.ts (+YT_UPSTREAM_WWW), scripts/{verify-yt-host-routing.sh, tv-url-availability-test.mjs, tv-url-round2.mjs, e2e13-diagnose-imported-playback.sh}; public/liner + .next/standalone rebuilt
+
+---
+Task ID: 14
+Agent: main (Z.ai)
+Task: Fix "still not working. the songs isnt playing" (after Task 13 host-routing fix)
+
+Work Log:
+- Traced the full signed-in TV chain past the Task 13 player-request fix: player request OK -> SABR streaming was the next blocker. SabrStream (googlevideo/sabr-stream) POSTs protobuf VideoPlaybackAbrRequest to serverAbrStreamingUrl (www.youtube.com/api/manifest/sabr/...) and consumes the application/vnd.yt-ump response as a PROGRESSIVE stream
+- ROOT CAUSE: on web both SABR URL shapes fell into BUFFERING proxies — www.youtube.com/api/manifest/... hit the /api/fetch catch-all (buffers whole body, AbortSignal.timeout(30s), POST no-retry -> 502) and googlevideo fallback hosts would hit /api/media (GET/HEAD-only -> 405). SabrStream's own watchdog (REQUEST_TIMEOUT_MS=30_000) resets on EVERY received chunk (verified in node_modules source) — the desktop gets progressive chunks so it never trips, but through a buffering proxy the browser receives ZERO bytes until the response ends -> "Request timed out" -> every imported/YouTube track dead after the player request succeeded. Exactly matches "still not working"
+- Fix (shell): new src/app/api/yt/sabr/route.ts — dedicated SABR UMP streaming proxy: POST ?u=..., allowlist isAllowedSabrTarget (youtube.com/googlevideo.com hosts AND /api/manifest path, in liner-proxy.ts), x-liner-user-agent -> user-agent mapping, origin/referer stripped for device-style UA, accept-encoding forced identity, 600s upstream timeout, and RESPONSE BODY STREAMED 1:1 via new Response(upstream.body) (content-length dropped) — chunk timing is the contract with SabrStream
+- Fix (SPA): webProxy.rewriteForWeb new rule BEFORE the media/fetch catch-alls: (youtube.com|googlevideo.com) + /api/manifest/... -> /api/yt/sabr?u=<encoded>; covers www serverAbrStreamingUrl AND SabrStream's r-node fallback rotation (mn/fvip hosts keep the /api/manifest path); header comment updated with the new route map
+- Tests: webProxy.test.ts +1 case (sabr url, googlevideo fallback, non-manifest unchanged); suite 709/709 (116 files); liner-app tsc clean
+- Shell typecheck via next build (standalone tsc OOM-killed in sandbox at 6GB heap); bun run build green after bun install + prisma generate (root node_modules had been pruned)
+- Runtime verification (scripts/verify-sabr-proxy.sh, standalone node server.js = FC runtime): SPA 200 with new bundle; disallowed host -> 400; allowed host + disallowed path -> 400; real-shaped /api/manifest/sabr POST relayed YouTube's response BYTE-IDENTICAL to a direct curl (same status/content-type/body); assets at /liner/assets/* 200
+- Browser E2E (dev :3000, new bundle index-LwC2TtkW.js): app boots clean, test-account sign-in works, r2-cached track "addiction" resolves via /api/media, stream attached aac 161kbps, 1557KB downloaded, readyState 4, zero errors (headless autoplay gate blocked currentTime advance this run — harness quirk, stream fully loaded); sandbox localStorage has NO YouTube tokens so the signed-in SABR chain cannot be exercised here — needs the user's browser session
+
+Stage Summary:
+- The last web-port wall in signed-in YouTube playback is gone: SABR UMP streaming now flows through a purpose-built streaming proxy instead of buffering proxies that starved SabrStream's chunk watchdog. Chain is now fully web-capable: auth (localStorage) -> tv-session (shell route) -> n-solver (in-browser) -> player request (/api/yt/www) -> SABR stream (/api/yt/sabr) -> MediaSource
+- Artifacts: src/app/api/yt/sabr/route.ts, src/lib/liner-proxy.ts (+isAllowedSabrTarget), liner-app/src/shared/lib/webProxy.ts (+test), scripts/verify-sabr-proxy.sh; public/liner + .next/standalone rebuilt and in sync (index-LwC2TtkW.js)
+- User must hard-refresh to pick up the new bundle; imported-track playback additionally requires their YouTube sign-in (Settings -> YouTube), which only exists in their browser
