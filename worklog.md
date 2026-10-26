@@ -379,3 +379,21 @@ Stage Summary:
 - Announcements land on all clients within 5-10s of sending, display "Announcement From JayJoice" + profile pic + message + "this message will be gone within 1 minute" + white Okay, vanish automatically after 60s, and a dismissed announcement never resurfaces
 - Feature lives entirely on the website port (shell API + SPA); the original desktop app has no such routes/settings
 - User should hard-refresh (Ctrl+Shift+R) after the platform republishes to get bundle App-d4jjD3CD.js
+
+---
+Task ID: 18
+Agent: main (Z.ai)
+Task: "continue if done" — production verification pass after the platform republished (Tasks 16 + 17 now live on liner-music.space-z.ai)
+
+Work Log:
+- Confirmed republish: prod serves index-3qXeI8ZE.js — byte-identical hash to local liner-app/dist and public/liner (full Task 16 + 17 project state)
+- Prod announcement API live: GET /api/announcements/current returned the user's OWN real broadcast ("hello everyone, a new update is incomin…") — proof the admin flow was used successfully on production by jayzeyluna; POST gate re-verified on prod (garbage token -> 401 invalid_token)
+- Injected the sandbox-held jayzeyluna session into a fresh prod-origin browser (localhost session JSON -> localStorage) to verify the logged-in experience: #/login -> #/ home feed, Your Mixes rendered, /api/announcements/current polling active from the page (resource entries)
+- Prod Settings shows the Website group + Announcement tab for jayzeyluna (tab list confirmed)
+- Playback E2E on prod: clicked track "poster boy" -> "playback started: poster boy in 1236ms" + "audio playing" + background caching; Task 16 deadline/rescue machinery live (also saw "pending load cancelled" guard path)
+- Fullscreen heart on prod: Like button SVG path tail byte-matches mingcute HeartLine glyph (Task 16 LikeMorphIcon) — no second "+"
+- Security cleanup: exported session base64 file deleted; injected prod session cleared from sandbox browser; browser closed
+
+Stage Summary:
+- Everything the user asked for is verified working on the live site: announcements (admin tab + global popup plumbing + polling), playback (sub-2s starts with SoundCloud rescue), fullscreen heart, hover preview + all previous features ship in the same bundle
+- Note found during verification: announcement polling starts inside AppFrame, so visitors parked on the login screen (#/login) don't receive broadcasts until they enter the app; left as-is intentionally (announcements target app users; avoids a modal fighting the login card) — easy to extend to the login page later if the owner wants
