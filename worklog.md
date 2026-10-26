@@ -291,3 +291,26 @@ Stage Summary:
 - The last web-port wall in signed-in YouTube playback is gone: SABR UMP streaming now flows through a purpose-built streaming proxy instead of buffering proxies that starved SabrStream's chunk watchdog. Chain is now fully web-capable: auth (localStorage) -> tv-session (shell route) -> n-solver (in-browser) -> player request (/api/yt/www) -> SABR stream (/api/yt/sabr) -> MediaSource
 - Artifacts: src/app/api/yt/sabr/route.ts, src/lib/liner-proxy.ts (+isAllowedSabrTarget), liner-app/src/shared/lib/webProxy.ts (+test), scripts/verify-sabr-proxy.sh; public/liner + .next/standalone rebuilt and in sync (index-LwC2TtkW.js)
 - User must hard-refresh to pick up the new bundle; imported-track playback additionally requires their YouTube sign-in (Settings -> YouTube), which only exists in their browser
+
+---
+Task ID: 15
+Agent: main (Z.ai)
+Task: "flashback by jd smith isnt playing as i am signed in to my youtube and also spotify songs like black sunrise"
+
+Work Log:
+- Identified both tracks via the Liner catalog API: Flashback (JD Smith) = YouTube VrZpGEO_o5Q, Black Sunrise = YouTube IDs (Andreas Stone/Denniz Jamm). Both are NOT r2-cached (POST /v1/tracks/{id}/playback -> PLAYBACK_NOT_FOUND, ingesting:false) -> they ride the YouTube chain
+- Verified production endpoints live: /api/youtube/tv-session OK (fast, cached minter), /api/po-token OK, anonymous TV player via /api/yt/www -> LOGIN_REQUIRED (expected anonymously; signed-in request untestable without the user's OAuth — Google blocks automated consent)
+- Confirmed prefersAccountPlayback defaults true, so the user's TV chain engages; their failure is inside it (most likely YouTube bot-checking the shared datacenter egress even when signed in) and the anonymous WEB_REMIX fallback then always fails -> every uncached track dead, matching the report
+- Since the root YouTube-side gate cannot be removed from a datacenter IP, shipped two user-visible features:
+  1) SoundCloud stand-in rescue (features/player/engine/soundcloudStandIn.ts): when ALL YouTube resolution fails, search SoundCloud (/search/tracks q=title+artists, client-id discovery reuse), fuzzy-score candidates (normalized token coverage for title+artist, duration tolerance max(35%, 45s), hard reject on far durations), play the best match through the existing SoundCloud streaming path. Setting: playerStore.soundcloudFallback (default ON, persisted + rehydrate guard) + Settings -> Playback toggle row
+  2) Playback diagnostics (shared/diagnostics/playbackDiagnostics.ts): 10-entry persisted ring buffer recording every stage (webremix/profile/tv failures with the real error text, played source, unresolved); surfaced as a panel in Settings -> Playback with Copy/Clear so the user can report the exact failure without devtools
+- Wired records into streamResolver (liner r2/TV/innertube successes, TV failures), innertubeAudio (webremix + per-profile failures), resolvePlaybackStream (unresolved + rescue + SC source)
+- Tests: soundcloudStandIn.test.ts (12: normalization, scoring gates, duration hard-reject, best-pick, mocked search/stream, abort), playbackDiagnostics.test.ts (5: cap/persist/subscribe/clear), streamResolver.test.ts +2 fallback tests (rescue works, no-match rethrows original) with getJson mocked offline by default (caught the stand-in hitting REAL SoundCloud network in tests); suite 728/728 (+20), tsc clean
+- E2E (sandbox browser, new bundle): Flashback -> r2 miss -> WEB_REMIX x2 + TVHTML5/VISIONOS/ANDROID_VR all bot-checked -> unresolved -> SC stand-in matched "JD Smith - Flashback (Orginial Mix)" score 3.93 -> stream attached aac 96kbps readyState 4; Black Sunrise -> stand-in matched "Andreas Stone With Denniz Jamm - Black Sunrise [NCS Release]" score 4.00 -> attached; toggle OFF -> no stand-in, no stream (correct); ON again -> rescued; diagnostics panel shows the full timeline; persistence survives reload
+- Standalone rebuilt + verified: SPA 200 with index-8DZT-8X4.js, SABR route allowlist still 400s bad targets
+
+Stage Summary:
+- Uncached/Spotify/YouTube tracks now have a working playback path even when YouTube bot-checks the server IP: SoundCloud stand-in rescue (default ON, toggleable) plays the same song from SoundCloud; the user's two example tracks both resolve with high match scores in E2E
+- The diagnostics panel in Settings -> Playback records the real per-stage failure reasons — if any track still fails, the user can copy the list and paste it, turning the next report into exact data
+- Signed-in TV SABR chain remains the primary path (unchanged); rescue only fires after it and all anonymous fallbacks fail
+- Artifacts: liner-app/src/features/player/engine/soundcloudStandIn.{ts,test.ts}, liner-app/src/shared/diagnostics/playbackDiagnostics.{ts,test.ts}, settings PlaybackTab + PlaybackDiagnosticsPanel.tsx, playerStore (+soundcloudFallback), streamResolver/innertubeAudio instrumentation, 12 locales (+7 keys), scripts/add_diagnostics_locales.py; public/liner + .next/standalone rebuilt (index-8DZT-8X4.js)

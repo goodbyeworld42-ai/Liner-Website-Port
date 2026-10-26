@@ -914,6 +914,17 @@
     "hover_preview": {
       "title": "I-preview ang kanta sa hover",
       "description": "I-hover ang isang kanta para makinig ng maikling preview. Tumatugtog lang kapag walang ibang tumutugtog."
+    },
+    "soundcloud_fallback": {
+      "title": "Hanapin ang kanta sa SoundCloud",
+      "description": "Kung hindi ma-play ang isang kanta, hahanapin ang parehong kanta sa SoundCloud at iyon ang ipapatakbo."
+    },
+    "playback_diagnostics": {
+      "title": "Diagnostic ng pag-play",
+      "description": "Mga kamakailang tangkang pag-play at pagkabigo. Kopyahin ang listahang ito kapag nag-ulat ng kantang hindi tumutugtog.",
+      "empty": "Wala pang naitala.",
+      "copy": "Kopyahin",
+      "clear": "Burahin"
     }
   },
   "toast": {

@@ -1,6 +1,7 @@
 import { InnertubeError, type InnertubeProfile } from "./innertubeClient";
 import { PLAYBACK_PROFILES } from "./playbackProfiles";
 import { log } from "@/shared/utils/logger";
+import { recordPlaybackFailure } from "@/shared/diagnostics/playbackDiagnostics";
 import {
   resetWebRemixSession,
   resolveWebRemixAudioStream,
@@ -67,6 +68,7 @@ async function resolveViaWebRemix(
       const message = error instanceof Error ? error.message : String(error);
       lastWebRemixError = message;
       failures.push(`WEB_REMIX: ${message}`);
+      recordPlaybackFailure("webremix", message, videoId);
       log(
         "yellow",
         "playback",
@@ -121,9 +123,9 @@ export async function resolveDirectAudioStream(
       return stream;
     } catch (error) {
       if (options.signal?.aborted) throw error;
-      failures.push(
-        `${profile.clientName}: ${error instanceof Error ? error.message : String(error)}`,
-      );
+      const message = error instanceof Error ? error.message : String(error);
+      failures.push(`${profile.clientName}: ${message}`);
+      recordPlaybackFailure("profile", `${profile.clientName}: ${message}`, videoId);
     }
   }
   throw new InnertubeError(

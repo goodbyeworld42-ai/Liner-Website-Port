@@ -914,6 +914,17 @@
     "hover_preview": {
       "title": "Preview songs on hover",
       "description": "Hover a song to hear a short preview. Only plays while nothing else is playing."
+    },
+    "soundcloud_fallback": {
+      "title": "Find the track on SoundCloud",
+      "description": "If a track can't be played, search SoundCloud for the same song and play that version instead."
+    },
+    "playback_diagnostics": {
+      "title": "Playback diagnostics",
+      "description": "Recent playback attempts and failures. Copy this list when reporting a song that won't play.",
+      "empty": "Nothing recorded yet.",
+      "copy": "Copy",
+      "clear": "Clear"
     }
   },
   "toast": {

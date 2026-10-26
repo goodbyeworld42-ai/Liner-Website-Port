@@ -3,6 +3,7 @@ import { useTranslation } from "@/languages";
 import { usePlayerStore } from "@/features/player";
 import { ToggleSwitch } from "@/shared/ui";
 import { SettingRow, SettingSection, SegmentedControl } from "../controls";
+import { PlaybackDiagnosticsPanel } from "./PlaybackDiagnosticsPanel";
 
 export function PlaybackTab({ searchQuery }: { searchQuery?: string }) {
   const { t } = useTranslation();
@@ -31,6 +32,12 @@ export function PlaybackTab({ searchQuery }: { searchQuery?: string }) {
   );
   const hoverPreview = usePlayerStore((state) => state.hoverPreview);
   const setHoverPreview = usePlayerStore((state) => state.setHoverPreview);
+  const soundcloudFallback = usePlayerStore(
+    (state) => state.soundcloudFallback,
+  );
+  const setSoundcloudFallback = usePlayerStore(
+    (state) => state.setSoundcloudFallback,
+  );
 
   useEffect(() => {
     setMounted(true);
@@ -49,6 +56,20 @@ export function PlaybackTab({ searchQuery }: { searchQuery?: string }) {
           <ToggleSwitch
             checked={hoverPreview}
             onChange={setHoverPreview}
+          />
+        }
+      />
+
+      <SettingRow
+        title={t("settings.soundcloud_fallback.title")}
+        description={t("settings.soundcloud_fallback.description")}
+        titleKey="settings.soundcloud_fallback.title"
+        descKey="settings.soundcloud_fallback.description"
+        searchQuery={searchQuery}
+        control={
+          <ToggleSwitch
+            checked={soundcloudFallback}
+            onChange={setSoundcloudFallback}
           />
         }
       />
@@ -139,6 +160,8 @@ export function PlaybackTab({ searchQuery }: { searchQuery?: string }) {
           />
         }
       />
+
+      <PlaybackDiagnosticsPanel searchQuery={searchQuery} />
     </SettingSection>
   );
 }

@@ -914,6 +914,17 @@
     "hover_preview": {
       "title": "Pratinjau lagungan saat diarahkan",
       "description": "Arahkan kursor ke lagu untuk mendengar cuplikan singkat. Hanya diputar saat tidak ada lagu lain yang sedang diputar."
+    },
+    "soundcloud_fallback": {
+      "title": "Cari lagu di SoundCloud",
+      "description": "Jika sebuah lagu tidak dapat diputar, lagu yang sama dicari di SoundCloud dan versi itulah yang diputar."
+    },
+    "playback_diagnostics": {
+      "title": "Diagnostik pemutaran",
+      "description": "Percobaan dan kegagalan pemutaran terbaru. Salin daftar ini saat melaporkan lagu yang tidak bisa diputar.",
+      "empty": "Belum ada catatan.",
+      "copy": "Salin",
+      "clear": "Hapus"
     }
   },
   "toast": {

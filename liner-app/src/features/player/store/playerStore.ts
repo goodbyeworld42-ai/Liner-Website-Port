@@ -55,6 +55,7 @@ export interface SessionState {
   pauseOnDeviceChange: boolean;
   autoplaySimilar: boolean;
   hoverPreview: boolean;
+  soundcloudFallback: boolean;
   trackDoubleClickBehavior: TrackDoubleClickBehavior;
   defaultPlaybackContext: DefaultPlaybackContext;
   fullscreen: boolean;
@@ -110,6 +111,7 @@ export interface PlayerStore extends PlayerState {
   setPauseOnDeviceChange: (value: boolean) => void;
   setAutoplaySimilar: (value: boolean) => void;
   setHoverPreview: (value: boolean) => void;
+  setSoundcloudFallback: (value: boolean) => void;
   setTrackDoubleClickBehavior: (value: TrackDoubleClickBehavior) => void;
   setDefaultPlaybackContext: (value: DefaultPlaybackContext) => void;
   setFullscreen: (value: boolean) => void;
@@ -155,6 +157,7 @@ export const usePlayerStore = create<PlayerStore>()(
       pauseOnDeviceChange: true,
       autoplaySimilar: true,
       hoverPreview: true,
+      soundcloudFallback: true,
       trackDoubleClickBehavior: "play",
       defaultPlaybackContext: "resume",
       fullscreen: false,
@@ -199,6 +202,8 @@ export const usePlayerStore = create<PlayerStore>()(
       setAutoplaySimilar: (autoplaySimilar: boolean) =>
         set({ autoplaySimilar }),
       setHoverPreview: (hoverPreview: boolean) => set({ hoverPreview }),
+      setSoundcloudFallback: (soundcloudFallback: boolean) =>
+        set({ soundcloudFallback }),
       setTrackDoubleClickBehavior: (
         trackDoubleClickBehavior: TrackDoubleClickBehavior,
       ) => set({ trackDoubleClickBehavior }),
@@ -307,6 +312,9 @@ export const usePlayerStore = create<PlayerStore>()(
           if (typeof state.hoverPreview !== "boolean") {
             state.hoverPreview = true;
           }
+          if (typeof state.soundcloudFallback !== "boolean") {
+            state.soundcloudFallback = true;
+          }
           if (
             typeof state.reverbLevel !== "number" ||
             isNaN(state.reverbLevel)
@@ -337,6 +345,7 @@ export const usePlayerStore = create<PlayerStore>()(
         pauseOnDeviceChange: state.pauseOnDeviceChange,
         autoplaySimilar: state.autoplaySimilar,
         hoverPreview: state.hoverPreview,
+        soundcloudFallback: state.soundcloudFallback,
         trackDoubleClickBehavior: state.trackDoubleClickBehavior,
         defaultPlaybackContext: state.defaultPlaybackContext,
         playbackRate: state.playbackRate,

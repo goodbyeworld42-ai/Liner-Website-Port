@@ -17,6 +17,10 @@ vi.mock("@/shared/youtube", async (importOriginal) => {
   };
 });
 
+vi.mock("@/shared/media/soundcloud/soundcloudCatalogRequest", () => ({
+  getJson: vi.fn().mockRejectedValue(new Error("soundcloud offline")),
+}));
+
 vi.mock("@/shared/media/soundcloud", async (importOriginal) => {
   const actual =
     await importOriginal<typeof import("@/shared/media/soundcloud")>();
@@ -25,6 +29,8 @@ vi.mock("@/shared/media/soundcloud", async (importOriginal) => {
 
 import { resolvePlaybackStream } from "./streamResolver";
 import { clearYoutubeStandInCache } from "./youtubeStandIn";
+import { usePlayerStore } from "../store/playerStore";
+import { getJson } from "@/shared/media/soundcloud/soundcloudCatalogRequest";
 
 const directStream = {
   url: "https://rr1.googlevideo.com/videoplayback?itag=251",
@@ -64,6 +70,9 @@ afterEach(() => {
   mocks.resolveDirectAudioStream.mockReset();
   mocks.searchRaw.mockReset();
   mocks.resolveSoundCloudStream.mockReset();
+  vi.mocked(getJson).mockReset();
+  vi.mocked(getJson).mockRejectedValue(new Error("soundcloud offline"));
+  usePlayerStore.setState({ soundcloudFallback: true });
   clearYoutubeStandInCache();
 });
 
@@ -81,6 +90,7 @@ describe("resolvePlaybackStream for youtube ids", () => {
   });
 
   it("surfaces the innertube error when youtube cannot play the track", async () => {
+    usePlayerStore.setState({ soundcloudFallback: false });
     mocks.resolveDirectAudioStream.mockRejectedValue(
       new Error("LOGIN_REQUIRED"),
     );
@@ -88,6 +98,48 @@ describe("resolvePlaybackStream for youtube ids", () => {
     await expect(resolvePlaybackStream(track("dQw4w9WgXcQ"))).rejects.toThrow(
       "LOGIN_REQUIRED",
     );
+  });
+
+  it("rescues the track through a soundcloud stand-in when youtube fails", async () => {
+    mocks.resolveDirectAudioStream.mockRejectedValue(
+      new Error("LOGIN_REQUIRED"),
+    );
+    vi.mocked(getJson).mockResolvedValue({
+      collection: [
+        {
+          id: 123,
+          title: "The Weeknd - Blinding Lights",
+          user: { username: "Weeknd Fans" },
+          duration: 200_000,
+        },
+      ],
+    });
+    mocks.resolveSoundCloudStream.mockResolvedValue({
+      url: "https://cf-media.sndcdn.com/standin",
+      mimeType: "audio/mpeg",
+      codec: "aac",
+      bitrate: 128_000,
+      expiresAt: null,
+    });
+
+    const stream = await resolvePlaybackStream(track("dQw4w9WgXcQ"));
+
+    expect(stream).toMatchObject({ url: "https://cf-media.sndcdn.com/standin" });
+    expect(mocks.resolveSoundCloudStream).toHaveBeenCalledWith("sc:123", {
+      signal: undefined,
+    });
+  });
+
+  it("rethrows the original error when the stand-in finds no match", async () => {
+    mocks.resolveDirectAudioStream.mockRejectedValue(
+      new Error("LOGIN_REQUIRED"),
+    );
+    vi.mocked(getJson).mockResolvedValue({ collection: [] });
+
+    await expect(resolvePlaybackStream(track("dQw4w9WgXcQ"))).rejects.toThrow(
+      "LOGIN_REQUIRED",
+    );
+    expect(mocks.resolveSoundCloudStream).not.toHaveBeenCalled();
   });
 });
 
@@ -107,6 +159,7 @@ describe("resolvePlaybackStream for ids of unknown sources", () => {
   });
 
   it("fails when youtube has no matching track", async () => {
+    usePlayerStore.setState({ soundcloudFallback: false });
     mocks.searchRaw.mockResolvedValue([]);
 
     await expect(resolvePlaybackStream(track("local-file-2"))).rejects.toThrow(

@@ -836,6 +836,17 @@
     "hover_preview": {
       "title": "Aperçu des titres au survol",
       "description": "Survolez un titre pour écouter un court extrait. Ne fonctionne que lorsque rien d'autre n'est en lecture."
+    },
+    "soundcloud_fallback": {
+      "title": "Trouver le titre sur SoundCloud",
+      "description": "Si un titre ne peut pas être lu, la même chanson est recherchée sur SoundCloud et cette version est lue à la place."
+    },
+    "playback_diagnostics": {
+      "title": "Diagnostic de lecture",
+      "description": "Tentatives et échecs de lecture récents. Copiez cette liste lorsque vous signalez un titre qui ne se lance pas.",
+      "empty": "Rien d'enregistré pour l'instant.",
+      "copy": "Copier",
+      "clear": "Effacer"
     }
   },
   "toast": {

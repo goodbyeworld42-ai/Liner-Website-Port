@@ -779,6 +779,17 @@
     "hover_preview": {
       "title": "Songs beim Hover vorhören",
       "description": "Bewege den Mauszeiger über einen Song, um eine kurze Vorschau zu hören. Spielt nur, wenn gerade nichts anderes abgespielt wird."
+    },
+    "soundcloud_fallback": {
+      "title": "Titel auf SoundCloud finden",
+      "description": "Wenn ein Titel nicht abgespielt werden kann, wird dasselbe Lück auf SoundCloud gesucht und stattdessen abgespielt."
+    },
+    "playback_diagnostics": {
+      "title": "Wiedergabe-Diagnose",
+      "description": "Letzte Wiedergabeversuche und Fehler. Kopiere diese Liste, wenn du einen Titel meldest, der nicht abgespielt wird.",
+      "empty": "Noch nichts aufgezeichnet.",
+      "copy": "Kopieren",
+      "clear": "Löschen"
     }
   },
   "toast": {

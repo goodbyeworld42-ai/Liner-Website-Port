@@ -834,6 +834,17 @@
     "hover_preview": {
       "title": "Üzerine gelince şarkı önizleme",
       "description": "Kısa bir önizleme duymak için imleci bir şarkının üzerinde tut. Başka bir şey çalarken yalnızca çalar."
+    },
+    "soundcloud_fallback": {
+      "title": "Parçayı SoundCloud'da bul",
+      "description": "Bir parça oynatılamıyorsa aynı şarkı SoundCloud'da aranır ve o sürüm çalınır."
+    },
+    "playback_diagnostics": {
+      "title": "Oynatma tanılama",
+      "description": "Son oynatma denemeleri ve hataları. Çalmayan bir şarkıyı bildirirken bu listeyi kopyalayın.",
+      "empty": "Henüz kayıt yok.",
+      "copy": "Kopyala",
+      "clear": "Temizle"
     }
   },
   "toast": {

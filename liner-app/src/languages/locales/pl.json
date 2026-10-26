@@ -838,6 +838,17 @@
     "hover_preview": {
       "title": "Podgląd utworów po najechaniu",
       "description": "Najedź kursorem na utwór, aby usłyszeć krótki fragment. Działa tylko wtedy, gdy nic innego nie jest odtwarzane."
+    },
+    "soundcloud_fallback": {
+      "title": "Znajdź utwór na SoundCloud",
+      "description": "Jeśli utwór nie może być odtworzony, ta sama piosenka jest wyszukiwana na SoundCloud i odtwarzana zamiast niej."
+    },
+    "playback_diagnostics": {
+      "title": "Diagnostyka odtwarzania",
+      "description": "Ostatnie próby i błędy odtwarzania. Skopiuj tę listę, zgłaszając utwór, który się nie odtwarza.",
+      "empty": "Na razie nic nie zapisano.",
+      "copy": "Kopiuj",
+      "clear": "Wyczyść"
     }
   },
   "toast": {

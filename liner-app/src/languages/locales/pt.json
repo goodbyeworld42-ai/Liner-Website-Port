@@ -897,6 +897,17 @@
     "hover_preview": {
       "title": "Pré-visualizar músicas ao passar o mouse",
       "description": "Passe o mouse sobre uma música para ouvir uma prévia curta. Toca apenas quando nada mais está sendo reproduzido."
+    },
+    "soundcloud_fallback": {
+      "title": "Encontrar a música no SoundCloud",
+      "description": "Se uma música não puder ser reproduzida, a mesma música é procurada no SoundCloud e essa versão é reproduzida."
+    },
+    "playback_diagnostics": {
+      "title": "Diagnóstico de reprodução",
+      "description": "Tentativas e falhas de reprodução recentes. Copie esta lista ao relatar uma música que não toca.",
+      "empty": "Nada registrado ainda.",
+      "copy": "Copiar",
+      "clear": "Limpar"
     }
   },
   "toast": {

@@ -834,6 +834,17 @@
     "hover_preview": {
       "title": "Anteprima dei brani al passaggio del mouse",
       "description": "Passa il mouse sopra un brano per ascoltare una breve anteprima. Riproduce solo quando non c'è altro in riproduzione."
+    },
+    "soundcloud_fallback": {
+      "title": "Trova il brano su SoundCloud",
+      "description": "Se un brano non può essere riprodotto, viene cercata la stessa canzone su SoundCloud e viene riprodotta quella versione."
+    },
+    "playback_diagnostics": {
+      "title": "Diagnostica riproduzione",
+      "description": "Tentativi ed errori di riproduzione recenti. Copia questo elenco quando segnali un brano che non si avvia.",
+      "empty": "Niente registrato per ora.",
+      "copy": "Copia",
+      "clear": "Cancella"
     }
   },
   "toast": {
