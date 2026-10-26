@@ -314,3 +314,19 @@ Stage Summary:
 - The diagnostics panel in Settings -> Playback records the real per-stage failure reasons — if any track still fails, the user can copy the list and paste it, turning the next report into exact data
 - Signed-in TV SABR chain remains the primary path (unchanged); rescue only fires after it and all anonymous fallbacks fail
 - Artifacts: liner-app/src/features/player/engine/soundcloudStandIn.{ts,test.ts}, liner-app/src/shared/diagnostics/playbackDiagnostics.{ts,test.ts}, settings PlaybackTab + PlaybackDiagnosticsPanel.tsx, playerStore (+soundcloudFallback), streamResolver/innertubeAudio instrumentation, 12 locales (+7 keys), scripts/add_diagnostics_locales.py; public/liner + .next/standalone rebuilt (index-8DZT-8X4.js)
+
+---
+Task ID: 15
+Agent: main
+Task: User request — "delete the liner ref or useless things and like screenshots because its lagging"
+
+Work Log:
+- Audited project sizes: liner-ref/ 37MB (full reference clone of the original Liner desktop repo), 31 debug/E2E PNG screenshots in download/, 3 pasted images in upload/, stale tool-results/, scaffold tests/ + examples/ + mini-services/, stray node_modules_googlevideo_link symlink, stale root package-lock.json (project uses bun.lock), dev.log.
+- Verified safety: all 3 "liner-ref" mentions in code (tv-session route, n-solver.ts, tv/nSolver.ts) are provenance comments only — no imports; tests/*.sh scripts contain no liner/youtube/spotify logic (sandbox scaffold).
+- Deleted: liner-ref/, download/*.png (31 files), upload/*.png (3 files), tool-results/, tests/, examples/, mini-services/, node_modules_googlevideo_link, package-lock.json, dev.log.
+- Untouched (required): liner-app/ (source + node_modules for rebuilds), src/, public/liner, .next/standalone, db/custom.db (user accounts), prisma/, scripts/, worklog.md, skills/.
+
+Stage Summary:
+- ~38MB of dead weight removed; project root now clean (node_modules trees dominate remaining size but are required for builds).
+- Post-cleanup integrity check: public/liner/assets/index-8DZT-8X4.js === liner-app/dist === .next/standalone copy (in sync, contains api/yt/sabr SABR fix); db/custom.db intact; dev server responds 200.
+- Note: these files were never served to browsers, so site UI lag (if any) is a separate issue — likely wallpaper/blur rendering; can optimize on request.
