@@ -41,10 +41,13 @@ function getDismissedId(): string | null {
 }
 
 function announcementAgeMs(a: Announcement): number {
-  const created = Date.parse(a.createdAt);
+  // Age counts from showAt (the moment the announcement goes live) so the
+  // "gone within 1 minute" window starts when the popup actually appears.
+  // Older servers without showAt fall back to createdAt.
+  const shown = Date.parse(a.showAt ?? "") || Date.parse(a.createdAt);
   // treat malformed timestamps as already expired
-  if (Number.isNaN(created)) return LIVE_WINDOW_MS;
-  return Date.now() - created;
+  if (Number.isNaN(shown)) return LIVE_WINDOW_MS;
+  return Date.now() - shown;
 }
 
 function isExpired(a: Announcement): boolean {
@@ -79,7 +82,12 @@ async function poll(): Promise<void> {
     if (!running) return;
 
     const showable =
-      announcement && !isExpired(announcement) && getDismissedId() !== announcement.id;
+      announcement &&
+      !isExpired(announcement) &&
+      // server already withholds pre-delay announcements; double-guard anyway
+      // so a future showAt can never flash the popup early
+      announcementAgeMs(announcement) >= 0 &&
+      getDismissedId() !== announcement.id;
 
     if (!showable) {
       if (useAnnouncementStore.getState().active) {

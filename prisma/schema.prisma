@@ -63,7 +63,8 @@ model PlayHistory {
 }
 
 // Website-port global announcement (broadcast by the site owner only).
-// Live for 60 seconds from createdAt; clients poll for the latest row.
+// Goes live at showAt (= createdAt + the 10-second broadcast delay), stays
+// visible for 60 seconds from showAt; clients poll for the latest live row.
 model Announcement {
   id              String   @id @default(cuid())
   message         String
@@ -71,6 +72,8 @@ model Announcement {
   senderName      String
   senderAvatarUrl String?
   createdAt       DateTime @default(now())
+  showAt          DateTime @default(now())
 
+  @@index([showAt])
   @@index([createdAt])
 }

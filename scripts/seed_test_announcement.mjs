@@ -1,7 +1,8 @@
 /**
  * Seeds a live announcement directly into db/custom.db for E2E testing
  * of the viewer-side popup (bypasses the admin gate on purpose).
- * Usage: DATABASE_URL="file:/home/z/my-project/db/custom.db" node scripts/seed_test_announcement.mjs [message] [--clean]
+ * Usage: node scripts/seed_test_announcement.mjs [message] [--delay <sec>] [--clean]
+ *   --delay N  -> showAt = now + N seconds (tests the 10s broadcast delay)
  */
 import { PrismaClient } from "@prisma/client";
 
@@ -14,14 +15,17 @@ if (process.argv.includes("--clean")) {
 }
 
 const message =
-  process.argv[2] ??
+  process.argv.find((a, i) => i > 1 && !a.startsWith("--") && isNaN(Number(a))) ??
   "the website will be updating soon with bug fixes, etc.\nsee you soon liners!";
 
+// inline PNG data URL (1x1 transparent-ish red dot), mirrors how the Liner app
+// stores custom profile pictures (data:image/...;base64 payloads)
 const avatar =
-  "data:image/svg+xml;utf8," +
-  encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect width="64" height="64" rx="14" fill="#ff4d4d"/><text x="32" y="42" font-size="30" text-anchor="middle" fill="white" font-family="sans-serif">J</text></svg>',
-  );
+  "data:image/png;base64," +
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+
+const delayIdx = process.argv.indexOf("--delay");
+const delaySec = delayIdx > -1 ? Number(process.argv[delayIdx + 1] ?? 0) : 0;
 
 const a = await db.announcement.create({
   data: {
@@ -29,7 +33,8 @@ const a = await db.announcement.create({
     senderUsername: "jayzeyluna",
     senderName: "JayJoice",
     senderAvatarUrl: avatar,
+    showAt: new Date(Date.now() + delaySec * 1000),
   },
 });
-console.log("seeded announcement", a.id);
+console.log("seeded announcement", a.id, "showAt in", delaySec, "s");
 await db.$disconnect();

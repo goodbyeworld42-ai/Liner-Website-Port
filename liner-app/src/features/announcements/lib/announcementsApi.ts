@@ -14,6 +14,13 @@ export interface Announcement {
   senderAvatarUrl: string | null;
   /** ISO timestamp of the broadcast moment. */
   createdAt: string;
+  /**
+   * ISO timestamp of when the announcement goes live (createdAt + 10s — the
+   * "the message will send globally within 10 seconds" promise). The server
+   * only serves announcements past this moment; the 1-minute expiry counts
+   * from here, not from createdAt.
+   */
+  showAt?: string | null;
 }
 
 /** The only Liner account allowed to broadcast website announcements. */

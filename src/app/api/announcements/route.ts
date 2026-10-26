@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import {
+  ANNOUNCEMENT_BROADCAST_DELAY_MS,
   ANNOUNCEMENT_DEFAULT_SENDER_NAME,
   ANNOUNCEMENT_MESSAGE_MAX,
   ANNOUNCEMENT_SEND_COOLDOWN_MS,
@@ -63,6 +64,7 @@ export async function POST(req: NextRequest) {
 
   await pruneOldAnnouncements();
 
+  const now = Date.now();
   const created = await db.announcement.create({
     data: {
       message,
@@ -70,6 +72,9 @@ export async function POST(req: NextRequest) {
       senderName:
         (verification.me.displayName?.trim() || ANNOUNCEMENT_DEFAULT_SENDER_NAME).slice(0, 60),
       senderAvatarUrl: normalizeAvatarUrl(verification.me.avatarUrl),
+      // "the message will send globally within 10 seconds" — enforced here so
+      // the timing is identical for every client, not just the sender's.
+      showAt: new Date(now + ANNOUNCEMENT_BROADCAST_DELAY_MS),
     },
   });
 

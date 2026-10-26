@@ -27,6 +27,13 @@ export const ANNOUNCEMENT_LIVE_WINDOW_MS = 60_000;
 /** Minimum gap between two broadcasts (accidental double-send guard). */
 export const ANNOUNCEMENT_SEND_COOLDOWN_MS = 5_000;
 
+/**
+ * The "the message will send globally within 10 seconds" delay. A broadcast
+ * becomes visible to every client only once its showAt moment has passed.
+ * Enforced server-side so the timing is identical for every visitor.
+ */
+export const ANNOUNCEMENT_BROADCAST_DELAY_MS = 10_000;
+
 /** Housekeeping: drop rows older than one hour on each new broadcast. */
 const ANNOUNCEMENT_RETENTION_MS = 60 * 60 * 1000;
 
@@ -38,6 +45,8 @@ export interface AnnouncementDTO {
   senderAvatarUrl: string | null;
   /** ISO timestamp of when the announcement was broadcast. */
   createdAt: string;
+  /** ISO timestamp of when the announcement goes live (createdAt + 10s). */
+  showAt: string;
 }
 
 type AnnouncementRow = {
@@ -47,6 +56,7 @@ type AnnouncementRow = {
   senderName: string;
   senderAvatarUrl: string | null;
   createdAt: Date;
+  showAt: Date;
 };
 
 export function serializeAnnouncement(row: AnnouncementRow): AnnouncementDTO {
@@ -57,18 +67,24 @@ export function serializeAnnouncement(row: AnnouncementRow): AnnouncementDTO {
     senderName: row.senderName,
     senderAvatarUrl: row.senderAvatarUrl,
     createdAt: row.createdAt.toISOString(),
+    showAt: row.showAt.toISOString(),
   };
 }
 
 /**
- * Latest announcement that is still inside its 60-second live window,
- * or null when the airwaves are quiet.
+ * Latest announcement that has passed its 10-second broadcast delay and is
+ * still inside its 60-second live window, or null when the airwaves are
+ * quiet. The live window starts at showAt (the moment clients first see it)
+ * so "gone within 1 minute" counts from when the popup actually appears.
  */
 export async function findLiveAnnouncement(): Promise<AnnouncementDTO | null> {
-  const cutoff = new Date(Date.now() - ANNOUNCEMENT_LIVE_WINDOW_MS);
+  const now = Date.now();
+  const showCutoff = new Date(now - ANNOUNCEMENT_LIVE_WINDOW_MS);
   const row = await db.announcement.findFirst({
-    where: { createdAt: { gt: cutoff } },
-    orderBy: { createdAt: "desc" },
+    where: {
+      showAt: { lte: new Date(now), gt: showCutoff },
+    },
+    orderBy: { showAt: "desc" },
   });
   return row ? serializeAnnouncement(row) : null;
 }
@@ -129,15 +145,32 @@ export async function verifyAnnouncementAdmin(
 }
 
 /**
+ * Longest avatar value we will persist. Liner avatars set through the app are
+ * inline data: URLs (PATCH /v1/users/me accepts them), capped around 400KB
+ * by the app's own resizer — anything larger is treated as absent.
+ */
+const AVATAR_MAX_STORED_LENGTH = 450_000;
+
+/**
  * Avatar URLs from the upstream API can be relative — absolute-ize them so
- * every visitor's browser can load them directly.
+ * every visitor's browser can load them directly. Inline data: URLs (how the
+ * app stores custom profile pictures) are passed through untouched so the
+ * announcement popup can render the sender's real profile pic.
  */
 export function normalizeAvatarUrl(
   avatarUrl: string | null | undefined,
 ): string | null {
   const trimmed = avatarUrl?.trim();
   if (!trimmed) return null;
+  if (trimmed.length > AVATAR_MAX_STORED_LENGTH) return null;
+  if (/^data:image\/(png|jpe?g|webp|gif|avif);base64,/i.test(trimmed)) {
+    return trimmed;
+  }
   if (/^https?:\/\//i.test(trimmed)) return trimmed;
   if (trimmed.startsWith("/")) return `${LINER_PRIMARY_API}${trimmed}`;
+  // relative path without a leading slash — prefix the upstream origin
+  if (/^(media\/|uploads\/|avatars\/|assets\/)/i.test(trimmed)) {
+    return `${LINER_PRIMARY_API}/${trimmed}`;
+  }
   return null;
 }
