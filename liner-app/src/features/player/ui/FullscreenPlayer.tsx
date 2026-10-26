@@ -21,6 +21,24 @@ import { useTranslation } from "@/languages";
 
 const BRACCATO_TAG = "braccato-lyrics";
 const KAWARP_FADE_IN_MS = 600;
+const LYRICS_VISIBLE_STORAGE_KEY = "liner.fullscreen.lyricsVisible";
+/** smooth expo-ish curve shared by the lyrics show/hide choreography */
+const LYRICS_TOGGLE_TRANSITION = {
+  duration: 0.5,
+  ease: [0.32, 0.72, 0, 1] as const,
+};
+
+/**
+ * Persisted lyrics-panel visibility for the fullscreen player. The Liner
+ * desktop app remembers whether you closed the lyrics pane; we do the same.
+ */
+function readStoredLyricsVisible(): boolean {
+  try {
+    return localStorage.getItem(LYRICS_VISIBLE_STORAGE_KEY) !== "0";
+  } catch {
+    return true;
+  }
+}
 
 interface BraccatoLyricsViewProps {
   lyrics: any[];
@@ -360,6 +378,20 @@ export function FullscreenPlayer({
     setTimeout(() => setKawarpShown(true), KAWARP_FADE_IN_MS);
   }, []);
 
+  // lyrics pane toggle (top-left "Lyrics" pill, like the desktop app)
+  const [lyricsVisible, setLyricsVisible] = useState(readStoredLyricsVisible);
+  const toggleLyrics = useCallback(() => {
+    setLyricsVisible((v) => {
+      const next = !v;
+      try {
+        localStorage.setItem(LYRICS_VISIBLE_STORAGE_KEY, next ? "1" : "0");
+      } catch {
+        // storage unavailable — the toggle still works for this session
+      }
+      return next;
+    });
+  }, []);
+
   const nextCoverUrl = player.queue[player.currentIndex + 1]?.coverUrl;
   useEffect(() => {
     void preloadCoverArt(coverUrl);
@@ -404,11 +436,30 @@ export function FullscreenPlayer({
       <div className="absolute inset-0 z-[1] bg-black/40" />
 
       <div className="absolute inset-0 z-10 flex">
-        <div className="flex-1 flex flex-col items-center justify-center gap-5">
+        {/* left: player UI — glides from half-width to centered when the
+            lyrics pane is hidden */}
+        <motion.div
+          initial={false}
+          animate={{ width: lyricsVisible ? "50%" : "100%" }}
+          transition={LYRICS_TOGGLE_TRANSITION}
+          className="flex flex-col items-center justify-center gap-5 overflow-hidden"
+        >
           <PlayerUiElements onClose={onClose} />
-        </div>
+        </motion.div>
 
-        <div className="flex-1 h-full min-h-0 pl-2 pr-6 flex flex-col relative">
+        {/* right: lyrics pane — collapses to zero width (slide + fade) while
+            the left column expands; fixed-width inner keeps text un-squished */}
+        <motion.div
+          initial={false}
+          animate={{
+            width: lyricsVisible ? "50%" : "0%",
+            opacity: lyricsVisible ? 1 : 0,
+            x: lyricsVisible ? 0 : 48,
+          }}
+          transition={LYRICS_TOGGLE_TRANSITION}
+          className="h-full min-h-0 flex flex-col relative overflow-hidden"
+        >
+          <div className="w-[50vw] h-full min-h-0 pl-2 pr-6 flex flex-col relative shrink-0">
           {showProviderIsland && (
             <div className="absolute top-[6px] left-1/2 -translate-x-1/2 z-30 pointer-events-none flex justify-center">
               <LyricsProviderIsland />
@@ -507,7 +558,8 @@ export function FullscreenPlayer({
               </motion.div>
             ) : null}
           </AnimatePresence>
-        </div>
+          </div>
+        </motion.div>
       </div>
 
       <button
@@ -518,6 +570,25 @@ export function FullscreenPlayer({
         className="absolute top-[6px] left-[6px] z-30 inline-flex h-[32px] w-[32px] items-center justify-center rounded-lg border-none bg-black/50 backdrop-blur-xl text-white/80 hover:text-white hover:bg-white/10 active:scale-[0.94] transition-all cursor-pointer select-none pointer-events-auto"
       >
         <DownLine size={18} />
+      </button>
+
+      {/* lyrics pane toggle — like the desktop app's top-left "Lyrics" pill */}
+      <button
+        type="button"
+        aria-pressed={lyricsVisible}
+        aria-label={t("player.lyrics")}
+        title={t("player.lyrics")}
+        onClick={toggleLyrics}
+        data-no-window-drag
+        className={`absolute top-[6px] left-[46px] z-30 inline-flex h-[32px] items-center rounded-lg border-none px-[12px] backdrop-blur-xl active:scale-[0.94] transition-all duration-300 cursor-pointer select-none pointer-events-auto ${
+          lyricsVisible
+            ? "bg-white/15 text-white hover:bg-white/25"
+            : "bg-black/50 text-white/70 hover:text-white hover:bg-white/10"
+        }`}
+      >
+        <span className="text-[13px] font-[600] leading-none tracking-wide">
+          {t("player.lyrics")}
+        </span>
       </button>
     </div>
   );

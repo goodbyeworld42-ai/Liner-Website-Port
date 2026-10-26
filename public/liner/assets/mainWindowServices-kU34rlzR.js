@@ -1,1 +1,0 @@
-import{i as e,o as t}from"./index-BETdxBJk.js";import{a as n,et as r}from"./cacheManager-DEM549gc.js";function i(){return typeof window>`u`?()=>{}:window.linerElectron?.onBundleStamp?.(e=>t(`gray`,`bundle`,e))??(()=>{})}function a(){e(),n(),r(),i()}export{a as initMainWindowServices};

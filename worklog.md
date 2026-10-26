@@ -422,3 +422,22 @@ Stage Summary:
 - Announcements: profile pic now survives broadcast (data: URLs are how Liner stores custom avatars) and the 10-second global-send delay is enforced server-side with showAt; 1-minute expiry counts from first visibility; tests + builds green, production syncs on republish
 - Alfredo bot runs headless on the same alfredo.py logic (no GUI), online with 24 servers/92 slash commands, voice libs installed, status visible at /api/discord-bot/status, and stays online via boot service + supervisor + instrumentation watchdog
 - One platform restart recommended at next opportunity so the boot service + preview are platform-owned; everything auto-recovers by design afterwards
+
+---
+Task ID: 20
+Agent: main (Z.ai)
+Task: Add the fullscreen player "Lyrics" toggle button (per user's screenshots) — hides/shows the lyrics pane with animation
+
+Work Log:
+- Analyzed FullscreenPlayer.tsx: two-column layout (left PlayerUiElements, right BraccatoLyricsView/skeleton/empty via AnimatePresence); lyrics previously always visible when available; close button at top-left
+- Implemented toggle (liner-app/src/features/player/ui/FullscreenPlayer.tsx):
+  - lyricsVisible state persisted to localStorage liner.fullscreen.lyricsVisible (default visible; readStoredLyricsVisible() guarded)
+  - Top-left "Lyrics" pill button next to the close button (left-[46px], h-32px, backdrop-blur-xl): brighter bg-white/15 when pane open, dimmer bg-black/50 when closed, aria-pressed + title, active:scale-0.94 press feedback, 300ms color transitions
+  - Animated choreography (shared LYRICS_TOGGLE_TRANSITION 0.5s cubic-bezier(0.32,0.72,0,1)): left pane motion.div animates width 50%<->100% (player UI glides to center like the real desktop app's hidden-lyrics view); right pane motion.div animates width 50%->0% + opacity + x:48 slide-out with overflow-hidden clipping; fixed-width inner (w-[50vw]) keeps lyrics text un-squished mid-animation; initial={false} so no replay on mount
+- Verification: tsc -b clean; new FullscreenPlayerLyricsToggle.test.tsx (framer-motion stubbed to apply animate->style synchronously; mocks for player/lyrics/covers/kawarp): 4/4 pass — pill default pressed + 50%/50%, toggle -> 100%/0% + opacity 0 + localStorage "0", second toggle restores, hidden preference restored across remount; full player suite 122/122 pass
+- Builds: vite build -> App-CGaR3xMQ.js synced to public/liner + .next/standalone; shell bun run build OK (3 known benign instrumentation warnings)
+- Live browser E2E blocked: sandbox browser lost its login session and the app is login-walled (component tests cover the behavior); dev server + preview will be platform-owned again after the one-time workspace restart noted in Task 19
+
+Stage Summary:
+- Fullscreen player now has the desktop-style "Lyrics" pill at top-left: click hides the lyrics pane (animated slide+fade, player UI centers), click again brings it back; preference persists per browser
+- Ships in the same bundle as Tasks 16-19; production syncs on republish (hard refresh to get App-CGaR3xMQ.js)
