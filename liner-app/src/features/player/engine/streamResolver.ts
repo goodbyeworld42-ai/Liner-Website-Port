@@ -28,10 +28,29 @@ import {
   recordPlaybackSuccess,
 } from "@/shared/diagnostics/playbackDiagnostics";
 import { resolveSoundCloudStandIn } from "./soundcloudStandIn";
+import { withDeadline } from "@/shared/utils/withDeadline";
 import { usePlayerStore } from "../store/playerStore";
 
 export interface ResolveStreamOptions {
   progressive?: boolean;
+}
+
+// A hung resolution stage (TV bootstrap, player request, SABR handshake,
+// liner cache probe ...) previously kept the player in "loading" forever AND
+// silently skipped the SoundCloud rescue below, because that rescue only runs
+// from the catch path. The deadline turns a hang into a normal error so the
+// rescue chain actually gets its chance; the runtime-level watchdog in
+// playerRuntime stays as the outer backstop.
+const RESOLVE_TIMEOUT_MS = 30_000;
+const STANDIN_TIMEOUT_MS = 15_000;
+
+export class ResolveTimeoutError extends Error {
+  constructor(ms: number) {
+    super(
+      `Timed out resolving audio after ${Math.round(ms / 1000)}s — trying fallbacks.`,
+    );
+    this.name = "ResolveTimeoutError";
+  }
 }
 
 export type {
@@ -136,8 +155,21 @@ export async function resolvePlaybackStream(
   signal?: AbortSignal,
   options: ResolveStreamOptions = {},
 ): Promise<PlaybackStream> {
+  // bound every stage inside resolvePlaybackStreamInner; abort the in-flight
+  // work when the deadline fires so sockets don't linger
+  const innerController = new AbortController();
+  const onOuterAbort = () => innerController.abort(signal?.reason);
+  signal?.addEventListener("abort", onOuterAbort, { once: true });
+  let innerTimedOut = false;
   try {
-    return await resolvePlaybackStreamInner(track, signal, options);
+    return await withDeadline(
+      resolvePlaybackStreamInner(track, innerController.signal, options),
+      RESOLVE_TIMEOUT_MS,
+      () => {
+        innerTimedOut = true;
+        return new ResolveTimeoutError(RESOLVE_TIMEOUT_MS);
+      },
+    );
   } catch (error) {
     if (isAbortError(error, signal)) throw error;
     recordPlaybackFailure("unresolved", error, track.title);
@@ -146,7 +178,14 @@ export async function resolvePlaybackStream(
     if (usePlayerStore.getState().soundcloudFallback && !toSoundCloudTrackId(track.id)) {
       try {
         const stream = fromSoundCloudStream(
-          await resolveSoundCloudStandIn(track, { signal }),
+          await withDeadline(
+            resolveSoundCloudStandIn(track, { signal }),
+            STANDIN_TIMEOUT_MS,
+            () =>
+              new Error(
+                `SoundCloud stand-in timed out after ${Math.round(STANDIN_TIMEOUT_MS / 1000)}s.`,
+              ),
+          ),
         );
         recordPlaybackSuccess("played", "soundcloud stand-in", track.title);
         return stream;
@@ -156,6 +195,9 @@ export async function resolvePlaybackStream(
       }
     }
     throw error;
+  } finally {
+    signal?.removeEventListener("abort", onOuterAbort);
+    if (innerTimedOut) innerController.abort();
   }
 }
 

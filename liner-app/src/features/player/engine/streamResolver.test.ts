@@ -130,6 +130,46 @@ describe("resolvePlaybackStream for youtube ids", () => {
     });
   });
 
+  it("rescues through the soundcloud stand-in when youtube hangs instead of erroring", async () => {
+    // regression: a hung resolution stage used to keep the player in
+    // "loading" forever and silently skip the stand-in, because the rescue
+    // only ran from the catch path. The resolve deadline must convert the
+    // hang into an error so the stand-in gets its chance.
+    vi.useFakeTimers();
+    try {
+      mocks.resolveDirectAudioStream.mockImplementation(
+        () => new Promise(() => {}),
+      );
+      vi.mocked(getJson).mockResolvedValue({
+        collection: [
+          {
+            id: 123,
+            title: "The Weeknd - Blinding Lights",
+            user: { username: "Weeknd Fans" },
+            duration: 200_000,
+          },
+        ],
+      });
+      mocks.resolveSoundCloudStream.mockResolvedValue({
+        url: "https://cf-media.sndcdn.com/standin",
+        mimeType: "audio/mpeg",
+        codec: "aac",
+        bitrate: 128_000,
+        expiresAt: null,
+      });
+
+      const attempt = resolvePlaybackStream(track("dQw4w9WgXcQ"));
+      const expectation = expect(attempt).resolves.toMatchObject({
+        url: "https://cf-media.sndcdn.com/standin",
+      });
+      await vi.advanceTimersByTimeAsync(30_500);
+      await expectation;
+      expect(mocks.resolveSoundCloudStream).toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("rethrows the original error when the stand-in finds no match", async () => {
     mocks.resolveDirectAudioStream.mockRejectedValue(
       new Error("LOGIN_REQUIRED"),
@@ -153,7 +193,7 @@ describe("resolvePlaybackStream for ids of unknown sources", () => {
     const stream = await resolvePlaybackStream(track("local-file-1"));
 
     expect(mocks.resolveDirectAudioStream).toHaveBeenCalledWith("4NRXx6U8ABQ", {
-      signal: undefined,
+      signal: expect.any(AbortSignal),
     });
     expect(stream).toMatchObject({ url: directStream.url });
   });

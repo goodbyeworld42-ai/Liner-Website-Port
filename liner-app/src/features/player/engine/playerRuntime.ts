@@ -7,6 +7,8 @@ import { isStandaloneAudioFile } from "@/shared/storage/audioFormat";
 import type { Track } from "@/shared/types";
 import { pitchShifter } from "./pitchShifter";
 import { resolvePlaybackStream, type PlaybackStream } from "./streamResolver";
+import { recordPlaybackFailure } from "@/shared/diagnostics/playbackDiagnostics";
+import { withDeadline } from "@/shared/utils/withDeadline";
 import { rewriteForWeb } from "@/shared/lib/webProxy";
 import {
   downloadAudioBytes,
@@ -20,6 +22,25 @@ import {
 // error recovery tuning (see the audio "error" handler)
 const RECOVERY_HOLD_MS = 3000;
 const WAITING_GRACE_MS = 300; // a buffering hiccup shorter than this never shows // must play this far past a recovery before it may retry again
+
+// A stuck load must never sit in "loading" forever with no feedback (the
+// "spinner spins but no error ever appears" failure mode). Both stream
+// resolution and the audio.play() call get a deadline; when one fires we
+// abort the load and surface a real error (toast + auto-skip + diagnostics)
+// instead of hanging silently.
+const RESOLVE_DEADLINE_MS = 45_000;
+const PLAY_START_DEADLINE_MS = 20_000;
+
+export class PlaybackTimeoutError extends Error {
+  constructor(phase: "resolve" | "start", trackTitle: string, ms: number) {
+    super(
+      phase === "resolve"
+        ? `Timed out resolving audio for "${trackTitle}" after ${Math.round(ms / 1000)}s.`
+        : `Audio never started for "${trackTitle}" within ${Math.round(ms / 1000)}s.`,
+    );
+    this.name = "PlaybackTimeoutError";
+  }
+}
 
 export class PlayerRuntime {
   private audio: HTMLAudioElement;
@@ -835,7 +856,16 @@ export class PlayerRuntime {
 
         const playPromise = this.audio.play();
         this.activePlayPromise = playPromise;
-        await playPromise;
+        await withDeadline(
+          playPromise,
+          PLAY_START_DEADLINE_MS,
+          () =>
+            new PlaybackTimeoutError(
+              "start",
+              track.title,
+              PLAY_START_DEADLINE_MS,
+            ),
+        );
 
         const audioStartLatencyMs = Math.round(
           performance.now() - this.loadStartTime,
@@ -853,9 +883,14 @@ export class PlayerRuntime {
         return;
       }
 
-      const stream = await resolvePlaybackStream(track, controller.signal, {
-        progressive: true,
-      });
+      const stream = await withDeadline(
+        resolvePlaybackStream(track, controller.signal, {
+          progressive: true,
+        }),
+        RESOLVE_DEADLINE_MS,
+        () =>
+          new PlaybackTimeoutError("resolve", track.title, RESOLVE_DEADLINE_MS),
+      );
       this.ttfbMs = Math.round(performance.now() - this.loadStartTime);
 
       if (epoch !== this.loadEpoch || controller.signal.aborted) {
@@ -910,7 +945,12 @@ export class PlayerRuntime {
 
       const playPromise = this.audio.play();
       this.activePlayPromise = playPromise;
-      await playPromise;
+      await withDeadline(
+        playPromise,
+        PLAY_START_DEADLINE_MS,
+        () =>
+          new PlaybackTimeoutError("start", track.title, PLAY_START_DEADLINE_MS),
+      );
 
       const audioStartLatencyMs = Math.round(
         performance.now() - this.loadStartTime,
@@ -937,6 +977,14 @@ export class PlayerRuntime {
     } catch (error) {
       if (epoch !== this.loadEpoch || controller.signal.aborted) {
         return;
+      }
+
+      if (error instanceof PlaybackTimeoutError) {
+        // deadline fired while something was still pending — stop the
+        // underlying work and record it so the Settings diagnostics panel
+        // shows WHY this track failed instead of a silent hang
+        controller.abort();
+        recordPlaybackFailure("unresolved", error, track.title);
       }
 
       if (error instanceof DOMException && error.name === "AbortError") {

@@ -83,7 +83,7 @@ describe("resolvePlaybackStream for soundcloud ids", () => {
 
     expect(mocks.resolveSoundCloudStream).toHaveBeenCalledWith(
       "sc:1099045843",
-      { signal: undefined },
+      { signal: expect.any(AbortSignal) },
     );
     expect(stream).toMatchObject({
       url: "https://cf-media.sndcdn.com/a.mp3",
@@ -128,7 +128,7 @@ describe("resolvePlaybackStream for soundcloud ids", () => {
     const stream = await resolvePlaybackStream(track("sc:7"));
 
     expect(mocks.resolveDirectAudioStream).toHaveBeenCalledWith("4NRXx6U8ABQ", {
-      signal: undefined,
+      signal: expect.any(AbortSignal),
     });
     expect(stream).toMatchObject({ url: directStream.url });
   });
