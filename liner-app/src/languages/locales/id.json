@@ -448,7 +448,8 @@
       "integrations": "Integrasi",
       "application": "Aplikasi",
       "help": "Bantuan",
-      "account": "Akun"
+      "account": "Akun",
+      "website": "Situs web"
     },
     "docs": "Dokumen",
     "support": "Dukungan",
@@ -466,7 +467,8 @@
       "discord": "Discord RPC",
       "youtube": "YouTube",
       "privacy": "Privasi",
-      "customization": "Kustomisasi"
+      "customization": "Kustomisasi",
+      "announcement": "Pengumuman"
     },
     "playback": {
       "description": "Perilaku antrean, aksi klik, dan keluaran audio."
@@ -925,6 +927,24 @@
       "empty": "Belum ada catatan.",
       "copy": "Salin",
       "clear": "Hapus"
+    },
+    "announcement": {
+      "description": "Kirim pesan ke semua pengguna situs web.",
+      "section_title": "Pengumuman global",
+      "section_subtitle": "Khusus port web — semua yang sedang ada di situs web akan melihat popup pengumumanmu dalam 10 detik. Hilang setelah 1 menit.",
+      "message_label": "Pesan",
+      "message_placeholder": "situs web akan segera diperbarui dengan perbaikan bug, dll.\nsampai jumpa, liners!",
+      "send": "Kirim pengumuman",
+      "sending": "Mengirim…",
+      "shortcut_hint": "Tips: tekan Ctrl+Enter untuk mengirim.",
+      "confirm_title": "Pengumuman terkirim",
+      "confirm_body": "Pesan akan terkirim secara global dalam 10 detik.",
+      "okay": "Oke",
+      "error_empty": "Tulis pesan dulu.",
+      "error_unauthorized": "Sesimu sudah kedaluwarsa — masuk lagi lalu coba lagi.",
+      "error_forbidden": "Hanya JayJoice yang bisa mengirim pengumuman.",
+      "error_rate_limited": "Perlahan! Tunggu beberapa detik antar pengumuman.",
+      "error_generic": "Gagal mengirim pengumuman. Coba lagi."
     }
   },
   "toast": {
@@ -1087,5 +1107,10 @@
     "copy_code": "Salin kode",
     "connected": "YouTube terhubung",
     "qr_label": "Kode QR masuk"
+  },
+  "announcement": {
+    "title_prefix": "Pengumuman dari",
+    "expires_note": "pesan ini akan hilang dalam 1 menit",
+    "okay": "Oke"
   }
 }

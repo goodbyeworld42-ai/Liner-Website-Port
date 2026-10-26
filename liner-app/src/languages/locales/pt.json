@@ -452,7 +452,8 @@
       "integrations": "Integrações",
       "application": "Aplicativo",
       "help": "Ajuda",
-      "account": "Conta"
+      "account": "Conta",
+      "website": "Site"
     },
     "docs": "Documentação",
     "support": "Suporte",
@@ -469,7 +470,8 @@
       "overlay": "Overlay",
       "discord": "Discord RPC",
       "privacy": "Privacidade",
-      "customization": "Personalização"
+      "customization": "Personalização",
+      "announcement": "Anúncio"
     },
     "playback": {
       "description": "Comportamento da fila, ações de clique e saída de áudio."
@@ -908,6 +910,24 @@
       "empty": "Nada registrado ainda.",
       "copy": "Copiar",
       "clear": "Limpar"
+    },
+    "announcement": {
+      "description": "Envie uma mensagem para todos no site.",
+      "section_title": "Anúncio global",
+      "section_subtitle": "Apenas na versão web — todos que estiverem no site verão seu anúncio em até 10 segundos. Ele desaparece após 1 minuto.",
+      "message_label": "Mensagem",
+      "message_placeholder": "o site será atualizado em breve com correções de bugs, etc.\naté logo, liners!",
+      "send": "Enviar anúncio",
+      "sending": "Enviando…",
+      "shortcut_hint": "Dica: pressione Ctrl+Enter para enviar.",
+      "confirm_title": "Anúncio enviado",
+      "confirm_body": "A mensagem será enviada globalmente em até 10 segundos.",
+      "okay": "Ok",
+      "error_empty": "Escreva uma mensagem primeiro.",
+      "error_unauthorized": "Sua sessão expirou — entre novamente e tente de novo.",
+      "error_forbidden": "Apenas JayJoice pode enviar anúncios.",
+      "error_rate_limited": "Calma! Espere alguns segundos entre anúncios.",
+      "error_generic": "Não foi possível enviar o anúncio. Tente novamente."
     }
   },
   "toast": {
@@ -1061,5 +1081,10 @@
     "title": "Por título (A–Z)",
     "duration": "Por duração",
     "popularity": "Por popularidade"
+  },
+  "announcement": {
+    "title_prefix": "Anúncio de",
+    "expires_note": "esta mensagem vai desaparecer em 1 minuto",
+    "okay": "Ok"
   }
 }

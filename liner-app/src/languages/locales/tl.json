@@ -448,7 +448,8 @@
       "integrations": "Mga Integration",
       "application": "Application",
       "help": "Tulong",
-      "account": "Account"
+      "account": "Account",
+      "website": "Website"
     },
     "docs": "Docs",
     "support": "Suporta",
@@ -466,7 +467,8 @@
       "discord": "Discord RPC",
       "youtube": "YouTube",
       "privacy": "Privacy",
-      "customization": "Customization"
+      "customization": "Customization",
+      "announcement": "Anunsiyo"
     },
     "playback": {
       "description": "Gawi ng pila, aksyon sa pag-click at audio output."
@@ -925,6 +927,24 @@
       "empty": "Wala pang naitala.",
       "copy": "Kopyahin",
       "clear": "Burahin"
+    },
+    "announcement": {
+      "description": "Magpadala ng mensahe sa lahat ng user ng website.",
+      "section_title": "Pandaigdigang anunsiyo",
+      "section_subtitle": "Web port lang — makikita ng lahat ng nasa website ang anunsiyo mo within 10 seconds. Mawawala ito pagkatapos ng 1 minuto.",
+      "message_label": "Mensahe",
+      "message_placeholder": "maa-update na soon ang website na may mga bug fix, atbp.\nsee you soon, liners!",
+      "send": "Ipadala ang anunsiyo",
+      "sending": "Ipinapadala…",
+      "shortcut_hint": "Tip: pindutin ang Ctrl+Enter para magpadala.",
+      "confirm_title": "Naipadala ang anunsiyo",
+      "confirm_body": "Ang mensahe ay ipapadala globally within 10 seconds.",
+      "okay": "Sige",
+      "error_empty": "Magsulat muna ng mensahe.",
+      "error_unauthorized": "Nag-expire ang session mo — mag-sign in ulit at subukan muli.",
+      "error_forbidden": "Si JayJoice lang ang maaaring magpadala ng mga anunsiyo.",
+      "error_rate_limited": "Dahan-dahan! Maghintay ng ilang segundo bago muli.",
+      "error_generic": "Hindi naipadala ang anunsiyo. Subukan muli."
     }
   },
   "toast": {
@@ -1087,5 +1107,10 @@
     "copy_code": "Kopyahin ang code",
     "connected": "Nakakonekta ang YouTube",
     "qr_label": "QR code sa pag-sign in"
+  },
+  "announcement": {
+    "title_prefix": "Anunsiyo mula kay",
+    "expires_note": "mawawala ang mensaheng ito within 1 minute",
+    "okay": "Sige"
   }
 }

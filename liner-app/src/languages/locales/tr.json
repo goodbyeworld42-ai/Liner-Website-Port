@@ -440,7 +440,8 @@
       "integrations": "Entegrasyonlar",
       "application": "Uygulama",
       "help": "Yardım",
-      "account": "Hesap"
+      "account": "Hesap",
+      "website": "Web sitesi"
     },
     "docs": "Belgeler",
     "support": "Destek",
@@ -456,7 +457,8 @@
       "shortcuts": "Kısayollar",
       "overlay": "Katman",
       "privacy": "Gizlilik",
-      "customization": "Özelleştirme"
+      "customization": "Özelleştirme",
+      "announcement": "Duyuru"
     },
     "playback": {
       "description": "Sıra davranışı, tıklama eylemleri ve ses çıkışı."
@@ -845,6 +847,24 @@
       "empty": "Henüz kayıt yok.",
       "copy": "Kopyala",
       "clear": "Temizle"
+    },
+    "announcement": {
+      "description": "Web sitesindeki herkese bir mesaj gönder.",
+      "section_title": "Global duyuru",
+      "section_subtitle": "Sadece web portası — sitedeki herkes duyurunu 10 saniye içinde görecek. 1 dakika sonra kaybolur.",
+      "message_label": "Mesaj",
+      "message_placeholder": "web sitesi yakında hata düzeltmeleri vb. ile güncellenecek.\nyakında görüşürüz liners!",
+      "send": "Duyuruyu gönder",
+      "sending": "Gönderiliyor…",
+      "shortcut_hint": "İpucu: göndermek için Ctrl+Enter'a bas.",
+      "confirm_title": "Duyuru gönderildi",
+      "confirm_body": "Mesaj 10 saniye içinde global olarak gönderilecek.",
+      "okay": "Tamam",
+      "error_empty": "Önce bir mesaj yaz.",
+      "error_unauthorized": "Oturumun süresi doldu — tekrar giriş yap ve yeniden dene.",
+      "error_forbidden": "Sadece JayJoice duyuru gönderebilir.",
+      "error_rate_limited": "Sakin! Duyurular arasında birkaç saniye bekle.",
+      "error_generic": "Duyuru gönderilemedi. Lütfen tekrar dene."
     }
   },
   "toast": {
@@ -996,5 +1016,10 @@
     "title": "Başlığa göre (A–Z)",
     "duration": "Süreye göre",
     "popularity": "Popülerliğe göre"
+  },
+  "announcement": {
+    "title_prefix": "Duyuru yapan:",
+    "expires_note": "bu mesaj 1 dakika içinde kaybolacak",
+    "okay": "Tamam"
   }
 }

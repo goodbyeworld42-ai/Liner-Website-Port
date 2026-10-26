@@ -442,7 +442,8 @@
       "integrations": "Intégrations",
       "application": "Application",
       "help": "Aide",
-      "account": "Compte"
+      "account": "Compte",
+      "website": "Site web"
     },
     "docs": "Documentation",
     "support": "Assistance",
@@ -458,7 +459,8 @@
       "shortcuts": "Raccourcis",
       "overlay": "Overlay",
       "privacy": "Confidentialité",
-      "customization": "Personnalisation"
+      "customization": "Personnalisation",
+      "announcement": "Annonce"
     },
     "playback": {
       "description": "Comportement de la file d'attente, actions au clic et sortie audio."
@@ -847,6 +849,24 @@
       "empty": "Rien d'enregistré pour l'instant.",
       "copy": "Copier",
       "clear": "Effacer"
+    },
+    "announcement": {
+      "description": "Diffusez un message à tous les utilisateurs du site web.",
+      "section_title": "Annonce globale",
+      "section_subtitle": "Portail web uniquement — toutes les personnes présentes sur le site verront votre annonce sous 10 secondes. Elle disparaît après 1 minute.",
+      "message_label": "Message",
+      "message_placeholder": "le site web sera bientôt mis à jour avec des corrections de bugs, etc.\nà bientôt, liners !",
+      "send": "Envoyer l'annonce",
+      "sending": "Envoi…",
+      "shortcut_hint": "Astuce : appuyez sur Ctrl+Entrée pour envoyer.",
+      "confirm_title": "Annonce envoyée",
+      "confirm_body": "Le message sera diffusé globalement sous 10 secondes.",
+      "okay": "Ok",
+      "error_empty": "Écrivez d'abord un message.",
+      "error_unauthorized": "Votre session a expiré — reconnectez-vous et réessayez.",
+      "error_forbidden": "Seul JayJoice peut envoyer des annonces.",
+      "error_rate_limited": "Doucement ! Attendez quelques secondes entre les annonces.",
+      "error_generic": "Impossible d'envoyer l'annonce. Veuillez réessayer."
     }
   },
   "toast": {
@@ -998,5 +1018,10 @@
     "title": "Par titre (A–Z)",
     "duration": "Par durée",
     "popularity": "Par popularité"
+  },
+  "announcement": {
+    "title_prefix": "Annonce de",
+    "expires_note": "ce message disparaîtra dans 1 minute",
+    "okay": "Ok"
   }
 }

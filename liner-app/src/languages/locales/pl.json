@@ -444,7 +444,8 @@
       "integrations": "Integracje",
       "application": "Aplikacja",
       "help": "Pomoc",
-      "account": "Konto"
+      "account": "Konto",
+      "website": "Strona internetowa"
     },
     "docs": "Dokumentacja",
     "support": "Pomoc techniczna",
@@ -460,7 +461,8 @@
       "shortcuts": "Skróty",
       "overlay": "Nakładka",
       "privacy": "Prywatność",
-      "customization": "Personalizacja"
+      "customization": "Personalizacja",
+      "announcement": "Ogłoszenie"
     },
     "playback": {
       "description": "Działanie kolejki, akcje po kliknięciu i wyjście audio."
@@ -849,6 +851,24 @@
       "empty": "Na razie nic nie zapisano.",
       "copy": "Kopiuj",
       "clear": "Wyczyść"
+    },
+    "announcement": {
+      "description": "Wyślij wiadomość do wszystkich osób na stronie.",
+      "section_title": "Ogłoszenie globalne",
+      "section_subtitle": "Tylko wersja przeglądarkowa — wszyscy na stronie zobaczą twoje ogłoszenie w ciągu 10 sekund. Znika po 1 minucie.",
+      "message_label": "Wiadomość",
+      "message_placeholder": "strona zostanie wkrótce zaktualizowana o poprawki błędów itp.\ndo zobaczenia, linersi!",
+      "send": "Wyślij ogłoszenie",
+      "sending": "Wysyłanie…",
+      "shortcut_hint": "Wskazówka: naciśnij Ctrl+Enter, aby wysłać.",
+      "confirm_title": "Ogłoszenie wysłane",
+      "confirm_body": "Wiadomość zostanie wysłana globalnie w ciągu 10 sekund.",
+      "okay": "Okej",
+      "error_empty": "Najpierw napisz wiadomość.",
+      "error_unauthorized": "Sesja wygasła — zaloguj się ponownie i spróbuj jeszcze raz.",
+      "error_forbidden": "Tylko JayJoice może wysyłać ogłoszenia.",
+      "error_rate_limited": "Spokojnie! Odczekaj kilka sekund między ogłoszeniami.",
+      "error_generic": "Nie udało się wysłać ogłoszenia. Spróbuj ponownie."
     }
   },
   "toast": {
@@ -1000,5 +1020,10 @@
     "title": "Według tytułu (A–Z)",
     "duration": "Według długości",
     "popularity": "Według popularności"
+  },
+  "announcement": {
+    "title_prefix": "Ogłoszenie od",
+    "expires_note": "ta wiadomość zniknie w ciągu 1 minuty",
+    "okay": "Okej"
   }
 }

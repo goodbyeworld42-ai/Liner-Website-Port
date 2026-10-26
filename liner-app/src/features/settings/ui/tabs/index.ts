@@ -8,3 +8,4 @@ export { OverlayTab } from "./OverlayTab";
 export { DiscordTab } from "./DiscordTab";
 export { YoutubeTab } from "./YoutubeTab";
 export { CustomizationTab } from "./CustomizationTab";
+export { AnnouncementTab } from "./AnnouncementTab";

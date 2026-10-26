@@ -448,7 +448,8 @@
       "integrations": "Integrations",
       "application": "Application",
       "help": "Help",
-      "account": "Account"
+      "account": "Account",
+      "website": "Website"
     },
     "docs": "Docs",
     "support": "Support",
@@ -466,7 +467,8 @@
       "discord": "Discord RPC",
       "youtube": "YouTube",
       "privacy": "Privacy",
-      "customization": "Customization"
+      "customization": "Customization",
+      "announcement": "Announcement"
     },
     "playback": {
       "description": "Queue behavior, click actions and audio output."
@@ -925,6 +927,24 @@
       "empty": "Nothing recorded yet.",
       "copy": "Copy",
       "clear": "Clear"
+    },
+    "announcement": {
+      "description": "Broadcast a message to everyone on the website.",
+      "section_title": "Global announcement",
+      "section_subtitle": "Website port only — everyone currently on the website will see your announcement popup within 10 seconds. It disappears after 1 minute.",
+      "message_label": "Message",
+      "message_placeholder": "the website will be updating soon with bug fixes, etc.\nsee you soon liners!",
+      "send": "Send announcement",
+      "sending": "Sending…",
+      "shortcut_hint": "Tip: press Ctrl+Enter to send.",
+      "confirm_title": "Announcement sent",
+      "confirm_body": "The message will send globally within 10 seconds.",
+      "okay": "Okay",
+      "error_empty": "Write a message first.",
+      "error_unauthorized": "Your session expired — sign in again and try again.",
+      "error_forbidden": "Only JayJoice can send announcements.",
+      "error_rate_limited": "Easy! Wait a few seconds between announcements.",
+      "error_generic": "Couldn't send the announcement. Please try again."
     }
   },
   "toast": {
@@ -1087,5 +1107,10 @@
     "copy_code": "Copy code",
     "connected": "YouTube connected",
     "qr_label": "Sign-in QR code"
+  },
+  "announcement": {
+    "title_prefix": "Announcement From",
+    "expires_note": "this message will be gone within 1 minute",
+    "okay": "Okay"
   }
 }

@@ -9,6 +9,7 @@ import {
   KeyboardLine,
   User3Line,
   YoutubeFill,
+  AnnouncementLine,
 } from "@mingcute/react";
 import {
   Play,
@@ -38,7 +39,9 @@ import {
   DiscordTab,
   YoutubeTab,
   AccountTab,
+  AnnouncementTab,
 } from "./tabs";
+import { isWebsiteAdmin } from "@/features/announcements";
 
 type TabId =
   | "Account"
@@ -50,7 +53,8 @@ type TabId =
   | "Appearance"
   | "Customization"
   | "Storage"
-  | "About";
+  | "About"
+  | "Announcement";
 
 const navGroupClass =
   "flex flex-col gap-[1px] rounded-[14px] bg-bg-surface/70 p-[4px] dark:bg-white/[0.06]";
@@ -66,9 +70,16 @@ const TAB_ICONS: Record<TabId, React.ComponentType<any>> = {
   Customization: Gallery,
   Storage: Database,
   About: InfoCircle,
+  Announcement: AnnouncementLine,
 };
 
-type TabGroupKey = "account" | "player" | "interface" | "integrations" | "application";
+type TabGroupKey =
+  | "account"
+  | "player"
+  | "interface"
+  | "integrations"
+  | "application"
+  | "website";
 
 const TAB_GROUPS: { labelKey: TabGroupKey; ids: TabId[] }[] = [
   { labelKey: "account", ids: ["Account"] },
@@ -76,7 +87,11 @@ const TAB_GROUPS: { labelKey: TabGroupKey; ids: TabId[] }[] = [
   { labelKey: "interface", ids: ["Appearance", "Customization", "Overlay"] },
   { labelKey: "integrations", ids: ["Youtube", "Discord"] },
   { labelKey: "application", ids: ["Storage", "About"] },
+  // website-port group: only visible to the site owner (see visibleGroups)
+  { labelKey: "website", ids: ["Announcement"] },
 ];
+
+const WEBSITE_GROUP_LABEL_KEY: TabGroupKey = "website";
 
 const SETTING_ITEMS: { tabId: TabId; titleKey: string; descKey?: string }[] = [
   // Account
@@ -338,6 +353,20 @@ const SETTING_ITEMS: { tabId: TabId; titleKey: string; descKey?: string }[] = [
   { tabId: "About", titleKey: "settings.notifications.test_button" },
 ];
 
+// searchable entries for the website-owner-only Announcement tab
+const ANNOUNCEMENT_SEARCH_ITEMS: { tabId: TabId; titleKey: string; descKey?: string }[] = [
+  {
+    tabId: "Announcement",
+    titleKey: "settings.announcement.section_title",
+    descKey: "settings.announcement.section_subtitle",
+  },
+  {
+    tabId: "Announcement",
+    titleKey: "settings.announcement.message_label",
+    descKey: "settings.announcement.message_placeholder",
+  },
+];
+
 const font = { fontFamily: "var(--font-inter), sans-serif" } as const;
 
 export default function SettingsModal() {
@@ -348,6 +377,21 @@ export default function SettingsModal() {
   const [activeTab, setActiveTab] = useState<TabId>("Account");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
+
+  // website-port owner gate: the Announcement tab exists only for @jayzeyluna
+  const authUser = useAuthStore((state) => state.user);
+  const isAdmin = isWebsiteAdmin(authUser?.username);
+  const visibleGroups = useMemo(
+    () =>
+      isAdmin
+        ? TAB_GROUPS
+        : TAB_GROUPS.filter((group) => group.labelKey !== WEBSITE_GROUP_LABEL_KEY),
+    [isAdmin],
+  );
+  const searchableItems = useMemo(
+    () => (isAdmin ? [...SETTING_ITEMS, ...ANNOUNCEMENT_SEARCH_ITEMS] : SETTING_ITEMS),
+    [isAdmin],
+  );
   const {
     attach: attachNavFade,
     onScroll: onNavScroll,
@@ -371,6 +415,7 @@ export default function SettingsModal() {
     Customization: t("settings.tabs.customization") || "Customization",
     Storage: t("settings.tabs.storage"),
     About: t("settings.tabs.about"),
+    Announcement: t("settings.tabs.announcement") || "Announcement",
   };
 
   const tabDescriptions: Record<TabId, string> = {
@@ -396,6 +441,9 @@ export default function SettingsModal() {
       "Window background wallpaper, transparency and block blur effects.",
     Storage: t("settings.storage.description"),
     About: t("settings.about.tagline"),
+    Announcement:
+      t("settings.announcement.description") ||
+      "Broadcast a message to everyone on the website.",
   };
 
   const matchingTabIds = useMemo(() => {
@@ -403,7 +451,7 @@ export default function SettingsModal() {
     const query = searchQuery.toLowerCase().trim();
     const set = new Set<TabId>();
 
-    const TAB_LABEL_KEYS: Record<TabId, string> = {
+    const TAB_LABEL_KEYS: Partial<Record<TabId, string>> = {
       Account: "settings.tabs.account",
       Playback: "settings.tabs.playback",
       Shortcuts: "settings.tabs.shortcuts",
@@ -414,9 +462,10 @@ export default function SettingsModal() {
       Customization: "settings.tabs.customization",
       Storage: "settings.tabs.storage",
       About: "settings.tabs.about",
+      ...(isAdmin ? { Announcement: "settings.tabs.announcement" } : {}),
     };
 
-    const TAB_DESC_KEYS: Record<TabId, string> = {
+    const TAB_DESC_KEYS: Partial<Record<TabId, string>> = {
       Account: "settings.profile.description",
       Playback: "settings.playback.description",
       Shortcuts: "settings.shortcuts.description",
@@ -427,19 +476,25 @@ export default function SettingsModal() {
       Customization: "settings.customization.description",
       Storage: "settings.storage.description",
       About: "settings.about.tagline",
+      ...(isAdmin
+        ? { Announcement: "settings.announcement.description" }
+        : {}),
     };
 
     (Object.keys(TAB_LABEL_KEYS) as TabId[]).forEach((tabId) => {
+      const labelKey = TAB_LABEL_KEYS[tabId];
+      const descKey = TAB_DESC_KEYS[tabId];
+      if (!labelKey) return;
       const texts = [
-        ...getTranslationsForAllLocales(TAB_LABEL_KEYS[tabId]),
-        ...getTranslationsForAllLocales(TAB_DESC_KEYS[tabId]),
+        ...getTranslationsForAllLocales(labelKey),
+        ...(descKey ? getTranslationsForAllLocales(descKey) : []),
       ];
       if (texts.some((txt) => txt.toLowerCase().includes(query))) {
         set.add(tabId);
       }
     });
 
-    SETTING_ITEMS.forEach((item) => {
+    searchableItems.forEach((item) => {
       const texts = [
         ...getTranslationsForAllLocales(item.titleKey),
         ...(item.descKey ? getTranslationsForAllLocales(item.descKey) : []),
@@ -450,16 +505,18 @@ export default function SettingsModal() {
     });
 
     return set;
-  }, [searchQuery]);
+  }, [searchQuery, isAdmin, searchableItems]);
 
   const filteredGroups = useMemo(() => {
-    if (!matchingTabIds) return TAB_GROUPS;
+    if (!matchingTabIds) return visibleGroups;
 
-    return TAB_GROUPS.map((group) => {
-      const ids = group.ids.filter((id) => matchingTabIds.has(id));
-      return { ...group, ids };
-    }).filter((group) => group.ids.length > 0);
-  }, [matchingTabIds]);
+    return visibleGroups
+      .map((group) => {
+        const ids = group.ids.filter((id) => matchingTabIds.has(id));
+        return { ...group, ids };
+      })
+      .filter((group) => group.ids.length > 0);
+  }, [matchingTabIds, visibleGroups]);
 
   useEffect(() => {
     if (!searchQuery.trim()) return;
@@ -468,14 +525,14 @@ export default function SettingsModal() {
       matchingTabIds.size > 0 &&
       !matchingTabIds.has(activeTab)
     ) {
-      const firstMatch = TAB_GROUPS.flatMap((g) => g.ids).find((id) =>
+      const firstMatch = visibleGroups.flatMap((g) => g.ids).find((id) =>
         matchingTabIds.has(id),
       );
       if (firstMatch) {
         setActiveTab(firstMatch);
       }
     }
-  }, [searchQuery, matchingTabIds, activeTab]);
+  }, [searchQuery, matchingTabIds, activeTab, visibleGroups]);
 
   const openExternal = (url: string) => {
     window.open(url, "_blank", "noopener,noreferrer");
@@ -745,6 +802,9 @@ export default function SettingsModal() {
                 <StorageTab searchQuery={searchQuery} />
               )}
               {activeTab === "About" && <AboutTab searchQuery={searchQuery} />}
+              {activeTab === "Announcement" && isAdmin && (
+                <AnnouncementTab searchQuery={searchQuery} />
+              )}
             </motion.div>
           </div>
         </div>

@@ -65,6 +65,7 @@ import {
 } from "@/features/settings";
 import { UpdateModal, UpdateToastBridge } from "@/features/updater";
 import { YoutubeSignInNotice } from "@/features/youtube-auth";
+import { AnnouncementPopup } from "@/features/announcements";
 
 interface AppFrameProps {
   children: React.ReactNode;
@@ -1088,6 +1089,7 @@ export default function AppFrame({ children }: AppFrameProps) {
       <CreatePlaylistModal />
       <ImportReviewModal />
       <SettingsModal />
+      <AnnouncementPopup />
       <UpdateModal />
       <YoutubeSignInNotice />
       <UpdateToastBridge />

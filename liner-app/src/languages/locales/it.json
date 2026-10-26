@@ -440,7 +440,8 @@
       "integrations": "Integrazioni",
       "application": "Applicazione",
       "help": "Aiuto",
-      "account": "Account"
+      "account": "Account",
+      "website": "Sito web"
     },
     "docs": "Documentazione",
     "support": "Supporto",
@@ -456,7 +457,8 @@
       "shortcuts": "Scorciatoie",
       "overlay": "Overlay",
       "privacy": "Privacy",
-      "customization": "Personalizzazione"
+      "customization": "Personalizzazione",
+      "announcement": "Annuncio"
     },
     "playback": {
       "description": "Comportamento della coda, azioni al clic e uscita audio."
@@ -845,6 +847,24 @@
       "empty": "Niente registrato per ora.",
       "copy": "Copia",
       "clear": "Cancella"
+    },
+    "announcement": {
+      "description": "Invia un messaggio a tutti gli utenti del sito web.",
+      "section_title": "Annuncio globale",
+      "section_subtitle": "Solo porta web — tutti coloro che sono sul sito vedranno il tuo annuncio entro 10 secondi. Scompare dopo 1 minuto.",
+      "message_label": "Messaggio",
+      "message_placeholder": "il sito web verrà presto aggiornato con correzioni di bug, ecc.\na presto, liners!",
+      "send": "Invia annuncio",
+      "sending": "Invio…",
+      "shortcut_hint": "Suggerimento: premi Ctrl+Invio per inviare.",
+      "confirm_title": "Annuncio inviato",
+      "confirm_body": "Il messaggio verrà inviato globalmente entro 10 secondi.",
+      "okay": "Ok",
+      "error_empty": "Scrivi prima un messaggio.",
+      "error_unauthorized": "Sessione scaduta — accedi di nuovo e riprova.",
+      "error_forbidden": "Solo JayJoice può inviare annunci.",
+      "error_rate_limited": "Piano! Aspetta qualche secondo tra gli annunci.",
+      "error_generic": "Impossibile inviare l'annuncio. Riprova."
     }
   },
   "toast": {
@@ -996,5 +1016,10 @@
     "title": "Per titolo (A–Z)",
     "duration": "Per durata",
     "popularity": "Per popolarità"
+  },
+  "announcement": {
+    "title_prefix": "Annuncio di",
+    "expires_note": "questo messaggio sparirà entro 1 minuto",
+    "okay": "Ok"
   }
 }

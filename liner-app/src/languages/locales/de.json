@@ -445,7 +445,8 @@
       "integrations": "Integrationen",
       "application": "Anwendung",
       "help": "Hilfe",
-      "account": "Konto"
+      "account": "Konto",
+      "website": "Webseite"
     },
     "docs": "Dokumentation",
     "support": "Support",
@@ -460,7 +461,8 @@
       "playback": "Wiedergabe",
       "overlay": "Overlay",
       "privacy": "Datenschutz",
-      "customization": "Anpassung"
+      "customization": "Anpassung",
+      "announcement": "Ankündigung"
     },
     "playback": {
       "description": "Verhalten der Warteschlange, Klickaktionen und Audioausgabe."
@@ -790,6 +792,24 @@
       "empty": "Noch nichts aufgezeichnet.",
       "copy": "Kopieren",
       "clear": "Löschen"
+    },
+    "announcement": {
+      "description": "Alle Nutzer der Webseite mit einer Nachricht erreichen.",
+      "section_title": "Globale Ankündigung",
+      "section_subtitle": "Nur Web-Port — alle, die gerade auf der Webseite sind, sehen dein Ankündigungs-Popup innerhalb von 10 Sekunden. Es verschwindet nach 1 Minute.",
+      "message_label": "Nachricht",
+      "message_placeholder": "die Webseite wird bald mit Fehlerbehebungen usw. aktualisiert.\nbis bald, liners!",
+      "send": "Ankündigung senden",
+      "sending": "Wird gesendet…",
+      "shortcut_hint": "Tipp: Mit Strg+Eingabe senden.",
+      "confirm_title": "Ankündigung gesendet",
+      "confirm_body": "Die Nachricht wird innerhalb von 10 Sekunden global gesendet.",
+      "okay": "Okay",
+      "error_empty": "Schreibe zuerst eine Nachricht.",
+      "error_unauthorized": "Deine Sitzung ist abgelaufen — melde dich erneut an und versuche es nochmal.",
+      "error_forbidden": "Nur JayJoice kann Ankündigungen senden.",
+      "error_rate_limited": "Ganz ruhig! Warte ein paar Sekunden zwischen Ankündigungen.",
+      "error_generic": "Ankündigung konnte nicht gesendet werden. Bitte versuche es erneut."
     }
   },
   "toast": {
@@ -940,5 +960,10 @@
     "title": "Nach Titel (A–Z)",
     "duration": "Nach Dauer",
     "popularity": "Nach Beliebtheit"
+  },
+  "announcement": {
+    "title_prefix": "Ankündigung von",
+    "expires_note": "diese Nachricht verschwindet innerhalb von 1 Minute",
+    "okay": "Okay"
   }
 }

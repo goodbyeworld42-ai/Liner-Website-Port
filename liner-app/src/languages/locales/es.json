@@ -443,7 +443,8 @@
       "integrations": "Integraciones",
       "application": "Aplicación",
       "help": "Ayuda",
-      "account": "Cuenta"
+      "account": "Cuenta",
+      "website": "Sitio web"
     },
     "docs": "Documentación",
     "support": "Soporte",
@@ -460,7 +461,8 @@
       "discord": "Discord RPC",
       "privacy": "Privacidad",
       "shortcuts": "Atajos",
-      "customization": "Personalización"
+      "customization": "Personalización",
+      "announcement": "Anuncio"
     },
     "playback": {
       "description": "Comportamiento de la cola, acciones de clic y salida de audio."
@@ -899,6 +901,24 @@
       "empty": "Todavía no hay nada registrado.",
       "copy": "Copiar",
       "clear": "Borrar"
+    },
+    "announcement": {
+      "description": "Envía un mensaje a todos los usuarios del sitio web.",
+      "section_title": "Anuncio global",
+      "section_subtitle": "Solo en la versión web — todos los que estén en el sitio verán tu anuncio en un máximo de 10 segundos. Desaparece después de 1 minuto.",
+      "message_label": "Mensaje",
+      "message_placeholder": "el sitio web se actualizará pronto con correcciones de errores, etc.\n¡nos vemos pronto, liners!",
+      "send": "Enviar anuncio",
+      "sending": "Enviando…",
+      "shortcut_hint": "Consejo: pulsa Ctrl+Enter para enviar.",
+      "confirm_title": "Anuncio enviado",
+      "confirm_body": "El mensaje se enviará globalmente en un plazo de 10 segundos.",
+      "okay": "Vale",
+      "error_empty": "Escribe primero un mensaje.",
+      "error_unauthorized": "Tu sesión caducó — inicia sesión de nuevo e inténtalo otra vez.",
+      "error_forbidden": "Solo JayJoice puede enviar anuncios.",
+      "error_rate_limited": "¡Tranquilo! Espera unos segundos entre anuncios.",
+      "error_generic": "No se pudo enviar el anuncio. Inténtalo de nuevo."
     }
   },
   "toast": {
@@ -1051,5 +1071,10 @@
     "title": "Por título (A–Z)",
     "duration": "Por duración",
     "popularity": "Por popularidad"
+  },
+  "announcement": {
+    "title_prefix": "Anuncio de",
+    "expires_note": "este mensaje desaparecerá en 1 minuto",
+    "okay": "Vale"
   }
 }
